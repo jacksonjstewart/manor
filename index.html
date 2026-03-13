@@ -108,14 +108,12 @@ body{font-family:'Outfit',sans-serif;color:#e8e8e8;-webkit-font-smoothing:antial
 }
 /* inline weather in header */
 .dh-weather{
-  display:none;align-items:center;gap:10px;
-  background:rgba(255,255,255,.03);border:1px solid var(--b0);
-  border-radius:11px;padding:10px 16px;flex-shrink:0;align-self:flex-start;
+  display:none;align-items:center;gap:8px;flex-shrink:0;align-self:center;
 }
 .dh-weather.show{display:flex}
-.dh-w-icon{font-size:22px;line-height:1}
-.dh-w-temp{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:#fff;line-height:1}
-.dh-w-desc{font-size:9px;font-weight:600;letter-spacing:1px;color:var(--t2);text-transform:uppercase;margin-top:2px}
+.dh-w-icon{font-size:18px;line-height:1;opacity:.7}
+.dh-w-temp{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--t1);line-height:1}
+.dh-w-desc{font-size:8.5px;font-weight:600;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin-top:2px}
 .dh-rule{height:1px;background:linear-gradient(90deg,var(--gb),transparent);margin-top:16px}
 
 /* ─── SECTION LABEL ─────────────────────────────────────────────────── */
@@ -133,14 +131,14 @@ body{font-family:'Outfit',sans-serif;color:#e8e8e8;-webkit-font-smoothing:antial
 
 .action-tile{
   border-radius:14px;
-  background:var(--s2);
-  border:1px solid var(--b1);
+  background:rgba(201,168,76,.04);
+  border:1px solid rgba(201,168,76,.14);
   overflow:hidden;
   transition:border-color .2s,background .2s,box-shadow .2s,transform .12s;
   cursor:pointer;user-select:none;
   position:relative;
 }
-.action-tile:hover{border-color:var(--b2);background:var(--s3)}
+.action-tile:hover{border-color:rgba(201,168,76,.26);background:rgba(201,168,76,.07)}
 .action-tile:active{transform:scale(.988)}
 .action-tile.done{
   background:rgba(63,207,110,.06);
@@ -150,6 +148,11 @@ body{font-family:'Outfit',sans-serif;color:#e8e8e8;-webkit-font-smoothing:antial
 .action-tile.warn{
   background:rgba(240,160,48,.06);
   border-color:rgba(240,160,48,.26);
+}
+/* training open = amber */
+.action-tile.training-open{
+  background:rgba(240,160,48,.05);
+  border-color:rgba(240,160,48,.22);
 }
 
 /* tile top row */
@@ -186,11 +189,16 @@ body{font-family:'Outfit',sans-serif;color:#e8e8e8;-webkit-font-smoothing:antial
   font-family:'Cormorant Garamond',serif;font-weight:300;font-size:40px;
   color:var(--t4);line-height:1;letter-spacing:-1.5px;
   transition:color .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  cursor:pointer;
 }
+.at-value:hover{opacity:.75}
 .action-tile.done .at-value{color:#fff}
 .action-tile.warn .at-value{color:var(--amber)}
 /* placeholder dimmer */
-.at-value.empty{font-size:24px;color:var(--t4);letter-spacing:0;font-style:italic;font-family:'Cormorant Garamond',serif}
+.at-value.empty{font-size:20px;color:var(--t3);letter-spacing:0;font-style:italic;font-family:'Cormorant Garamond',serif;cursor:default}
+/* edit hint shown on done tiles */
+.at-edit-hint{font-size:8px;color:var(--t3);letter-spacing:1px;margin-top:3px;text-transform:uppercase;display:none}
+.action-tile.done .at-edit-hint{display:block}
 
 .at-right{
   display:flex;flex-direction:column;align-items:flex-end;
@@ -442,32 +450,63 @@ body{font-family:'Outfit',sans-serif;color:#e8e8e8;-webkit-font-smoothing:antial
 .streak-lbl{font-size:8.5px;font-weight:700;letter-spacing:2px;color:rgba(201,168,76,.42);text-transform:uppercase}
 .streak-sub{font-size:12px;color:var(--t2);margin-top:4px}
 
-/* ── STATUS CARDS ── */
-.status-card{
+/* ── WHOOP-STYLE ARC GAUGES ── */
+.rp-arcs{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:10px;margin-bottom:14px;
+}
+.rp-arc{
   background:var(--s2);border:1px solid var(--b0);border-radius:12px;
-  padding:16px 18px;margin-bottom:10px;
-  transition:border-color .2s,background .2s;
+  padding:14px 10px 10px;display:flex;flex-direction:column;align-items:center;
+  transition:border-color .2s;position:relative;overflow:hidden;
 }
-.status-card:hover{border-color:var(--b1)}
-.sc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.sc-title{font-size:8.5px;font-weight:700;letter-spacing:2.5px;color:var(--t3);text-transform:uppercase}
-.sc-status{
-  font-size:7.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
-  padding:3px 9px;border-radius:99px;
+.rp-arc:hover{border-color:var(--b1)}
+.rp-arc-svg{display:block;margin:0 auto 6px}
+.rp-arc-center{
+  position:absolute;
+  top:50%;left:50%;transform:translate(-50%,-68%);
+  display:flex;flex-direction:column;align-items:center;
+  pointer-events:none;
 }
-.sc-status.green{color:var(--green);background:rgba(63,207,110,.1);border:1px solid rgba(63,207,110,.22)}
-.sc-status.amber{color:var(--amber);background:rgba(240,160,48,.1);border:1px solid rgba(240,160,48,.2)}
-.sc-status.red{color:var(--red);background:rgba(224,85,85,.1);border:1px solid rgba(224,85,85,.2)}
-.sc-status.gold{color:var(--gold);background:var(--gd);border:1px solid var(--gb)}
-.sc-status.gray{color:var(--t3);background:rgba(255,255,255,.04);border:1px solid var(--b0)}
-.sc-status.blue{color:var(--blue);background:rgba(90,156,245,.1);border:1px solid rgba(90,156,245,.2)}
-.sc-value{
-  font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;
-  color:#fff;line-height:1;letter-spacing:-1.5px;margin-bottom:5px;
+.rp-arc-val{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:18px;color:#fff;line-height:1;letter-spacing:-.5px;
 }
-.sc-label{font-size:12px;color:var(--t2);line-height:1.4}
-.sc-sub{font-size:9px;color:var(--t3);margin-top:5px}
-.sc-proj{font-size:10px;color:var(--gold);margin-top:6px;letter-spacing:.2px}
+.rp-arc-unit{font-size:7px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-top:1px}
+.rp-arc-lbl{
+  font-size:7.5px;font-weight:700;letter-spacing:1.5px;
+  color:var(--t3);text-transform:uppercase;text-align:center;
+  margin-top:4px;
+}
+.rp-arc-status{
+  font-size:7px;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;margin-top:3px;
+}
+
+/* ── PHASE CHIPS ── */
+.rp-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.rp-chip{
+  font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  padding:5px 11px;border-radius:99px;
+  border:1px solid var(--b0);color:var(--t3);background:var(--s2);
+  white-space:nowrap;
+}
+.rp-chip.green{color:var(--green);background:rgba(63,207,110,.08);border-color:rgba(63,207,110,.2)}
+.rp-chip.amber{color:var(--amber);background:rgba(240,160,48,.08);border-color:rgba(240,160,48,.2)}
+.rp-chip.red{color:var(--red);background:rgba(224,85,85,.08);border-color:rgba(224,85,85,.2)}
+.rp-chip.gold{color:var(--gold);background:var(--gd);border-color:var(--gb)}
+.rp-chip.blue{color:var(--blue);background:rgba(90,156,245,.08);border-color:rgba(90,156,245,.2)}
+
+/* ── WEIGHT SPARKLINE ── */
+.rp-spark-wrap{
+  background:var(--s2);border:1px solid var(--b0);border-radius:12px;
+  padding:14px 16px;margin-bottom:14px;
+}
+.rp-spark-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+.rp-spark-title{font-size:8.5px;font-weight:700;letter-spacing:2.5px;color:var(--t3);text-transform:uppercase}
+.rp-spark-val{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:#fff;letter-spacing:-.5px}
+#rp-spark{width:100%;display:block}
+.rp-spark-proj{font-size:9px;color:var(--gold);margin-top:7px;letter-spacing:.2px}
 
 /* macro rings */
 .rp-rings{
@@ -770,20 +809,7 @@ canvas{display:block;width:100%!important}
         <div class="rp-scroll">
           <div class="rp-mark">
             <div class="rp-mark-text">MANOR</div>
-            <div id="sdot" class="sdot"></div>
-          </div>
-
-          <div class="rp-clock" id="rp-clock">12:00<span class="rp-ampm" id="rp-ampm">PM</span></div>
-          <div class="rp-date" id="rp-date">Loading…</div>
-          <div class="rp-divider"></div>
-
-          <div class="rp-weather" id="weather-box">
-            <div class="w-icon" id="w-icon">—</div>
-            <div class="w-right">
-              <div class="w-temp" id="w-temp">—°</div>
-              <div class="w-desc" id="w-desc">—</div>
-              <div class="w-loc" id="w-loc">—</div>
-            </div>
+            <div id="sync-row"><div class="sdot" id="sync-dot"></div><div id="sync-txt"></div></div>
           </div>
 
           <div class="rp-streak">
@@ -794,49 +820,25 @@ canvas{display:block;width:100%!important}
             </div>
           </div>
 
-          <!-- Status Cards -->
-          <div class="sl" style="padding:0 2px">On Track</div>
+          <!-- WHOOP-style arc gauges -->
+          <div class="sl" style="padding:0 2px;margin-bottom:14px">Today</div>
+          <div class="rp-arcs" id="rp-arcs"></div>
 
-          <div class="status-card" id="sc-calories">
-            <div class="sc-header">
-              <div class="sc-title">Calories · 3-Day Avg</div>
-              <div class="sc-status gray" id="sc-cal-status">Waiting</div>
-            </div>
-            <div class="sc-value" id="sc-cal-val">—</div>
-            <div class="sc-label" id="sc-cal-label">Log your first entry</div>
-            <div class="sc-sub" id="sc-cal-sub"></div>
-          </div>
+          <!-- Phase chip row -->
+          <div class="rp-chips" id="rp-chips"></div>
 
-          <div class="status-card" id="sc-protein">
-            <div class="sc-header">
-              <div class="sc-title">Protein · 3-Day Avg</div>
-              <div class="sc-status gray" id="sc-pro-status">Waiting</div>
+          <!-- Weight trend mini sparkline -->
+          <div class="rp-spark-wrap" id="rp-spark-wrap">
+            <div class="rp-spark-header">
+              <span class="rp-spark-title">Weight Trend</span>
+              <span class="rp-spark-val" id="rp-spark-val">—</span>
             </div>
-            <div class="sc-value" id="sc-pro-val">—</div>
-            <div class="sc-label" id="sc-pro-label">Log your first entry</div>
-          </div>
-
-          <div class="status-card" id="sc-training">
-            <div class="sc-header">
-              <div class="sc-title">Training · 7 Days</div>
-              <div class="sc-status gray" id="sc-train-status">Waiting</div>
-            </div>
-            <div class="sc-value" id="sc-train-val">—</div>
-            <div class="sc-label" id="sc-train-label">Log your first session</div>
-          </div>
-
-          <div class="status-card" id="sc-weight">
-            <div class="sc-header">
-              <div class="sc-title">Body Weight · Trend</div>
-              <div class="sc-status gray" id="sc-wt-status">—</div>
-            </div>
-            <div class="sc-value" id="sc-wt-val">—</div>
-            <div class="sc-label" id="sc-wt-label">Log weight to see trend</div>
-            <div class="sc-proj" id="sc-wt-proj"></div>
+            <canvas id="rp-spark" height="44"></canvas>
+            <div class="rp-spark-proj" id="rp-spark-proj"></div>
           </div>
 
           <!-- Macro Rings -->
-          <div class="rp-rings" style="margin-top:4px">
+          <div class="rp-rings">
             <div class="rings-title">Today's Progress</div>
             <div class="rings-row" id="rings-row"></div>
           </div>
@@ -853,8 +855,6 @@ canvas{display:block;width:100%!important}
           <!-- Recent Sessions -->
           <div class="sl">Recent Sessions</div>
           <div class="rp-sess" id="rp-sessions"></div>
-
-          <div id="sync-row"><div class="sdot" id="sync-dot"></div><div id="sync-txt">—</div></div>
         </div>
       </div>
     </div>
@@ -1147,7 +1147,13 @@ try { workoutLog = GC(CK.w) || []; } catch {}
 try { goals      = GC(CK.g) || goals; } catch {}
 try { campaign   = GC(CK.c) || null; } catch {}
 try { committedDays = new Set(GC(CK.committed) || []); } catch {}
-try { draftDays     = new Set(GC(CK.draft) || []); } catch {}
+// Only restore draft state if it's actually for today - clear stale drafts
+try {
+  const storedDraft = GC(CK.draft) || [];
+  const today = todayKey();
+  draftDays = new Set(storedDraft.filter(d => d === today));
+  SC(CK.draft, [...draftDays]); // clean up stale entries
+} catch {}
 
 const vb = document.getElementById('ver-badge'); if (vb) vb.textContent = 'v' + VERSION;
 dismissLoader();
@@ -1207,10 +1213,8 @@ async function syncAll() {
 }
 
 function setSS(s,msg) {
-  ['sdot','sync-dot'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.className = 'sdot ' + s;
-  });
+  const el = document.getElementById('sync-dot');
+  if (el) el.className = 'sdot ' + s;
   const st = document.getElementById('sync-txt'); if (st) st.textContent = msg;
 }
 
@@ -1353,39 +1357,39 @@ function renderActionTiles() {
 
   ACTIONS.forEach(def => {
     const raw = te[def.id]; const has = raw!=null&&raw!=='';
-    let displayVal = def.ph, tileClass = 'action-tile', stampText = '', yesterdayText = '', yesterdayCls = '';
+    let displayVal = '', tileClass = 'action-tile', stampText = '', yesterdayText = '', yesterdayCls = '';
 
     if (has) {
       tileClass = 'action-tile done';
       const logTime = te[def.id+'_loggedAt'] || '';
-      stampText = `Logged ${logTime ? 'at '+logTime : 'today'} — by ${LOGGED_BY}`;
+      stampText = `${logTime ? logTime : 'Today'} — ${LOGGED_BY}`;
 
       if (def.id==='wakeTime') {
-        displayVal = String(raw).slice(0,5);
-        if (t2m(raw) > t2m(goals.wakeGoal)) tileClass = 'action-tile warn';
-        // yesterday comparison
+        // Always store and display as HH:MM string, never rely on Date parsing
+        const wt = String(raw).trim().slice(0,5);
+        displayVal = wt;
+        if (t2m(wt) > t2m(goals.wakeGoal)) tileClass = 'action-tile warn';
         if (yesterday.wakeTime) {
-          const diff = t2m(raw) - t2m(yesterday.wakeTime);
+          const diff = t2m(wt) - t2m(String(yesterday.wakeTime).slice(0,5));
           if (diff < -5) { yesterdayText = `${Math.abs(diff)}min earlier than yesterday`; yesterdayCls='ay-good'; }
           else if (diff > 5) { yesterdayText = `${diff}min later than yesterday`; yesterdayCls='ay-miss'; }
-          else { yesterdayText = 'Same as yesterday'; yesterdayCls='ay-same'; }
+          else { yesterdayText = 'Same time as yesterday'; yesterdayCls='ay-same'; }
         }
       } else if (def.id==='weight') {
         displayVal = parseFloat(raw).toFixed(1)+' lbs';
         if (yesterday.weight) {
           const diff = (parseFloat(raw)-parseFloat(yesterday.weight)).toFixed(1);
-          if (diff < 0) { yesterdayText = `${Math.abs(diff)} lbs down from yesterday`; yesterdayCls='ay-good'; }
-          else if (diff > 0) { yesterdayText = `+${diff} lbs from yesterday`; yesterdayCls='ay-miss'; }
-          else { yesterdayText = 'Same as yesterday'; yesterdayCls='ay-same'; }
+          yesterdayText = Number(diff)<0 ? `${Math.abs(diff)} lbs down from yesterday` : Number(diff)>0 ? `+${diff} lbs from yesterday` : 'Same as yesterday';
+          yesterdayCls = Number(diff)<0?'ay-good':Number(diff)>0?'ay-miss':'ay-same';
         }
       } else if (def.id==='calories') {
-        displayVal = raw+' kcal';
+        displayVal = Number(raw).toLocaleString()+' kcal';
         if (raw>=goals.caloriesMin&&raw<=goals.caloriesMax) tileClass='action-tile done';
         else if (raw>goals.caloriesMax) tileClass='action-tile warn';
         if (yesterday.calories) {
           const diff = raw-yesterday.calories;
-          yesterdayText = diff===0 ? 'Same as yesterday' : `${Math.abs(diff)} kcal ${diff<0?'less':'more'} than yesterday`;
-          yesterdayCls = diff<0&&raw<=goals.caloriesMax ? 'ay-good' : diff>0&&raw>goals.caloriesMax ? 'ay-miss' : 'ay-same';
+          yesterdayText = diff===0?'Same as yesterday':`${Math.abs(diff)} kcal ${diff<0?'less':'more'} than yesterday`;
+          yesterdayCls = diff<0&&raw<=goals.caloriesMax?'ay-good':diff>0&&raw>goals.caloriesMax?'ay-miss':'ay-same';
         }
       } else if (def.id==='protein') {
         displayVal = raw+'g';
@@ -1393,30 +1397,36 @@ function renderActionTiles() {
         if (yesterday.protein) {
           const diff = raw-yesterday.protein;
           yesterdayText = `${Math.abs(diff)}g ${diff>=0?'more':'less'} than yesterday`;
-          yesterdayCls = raw>=goals.proteinGoal ? 'ay-good' : 'ay-miss';
+          yesterdayCls = raw>=goals.proteinGoal?'ay-good':'ay-miss';
         }
       } else if (def.id==='trainingType') {
         displayVal = raw;
-        // Check if workout sets logged today
         const hasSets = workoutLog.some(e=>e.date===todayKey());
-        if (hasSets) yesterdayText = 'Session data logged';
-        yesterdayCls = 'ay-good';
+        if (hasSets) { yesterdayText = 'Session data logged'; yesterdayCls='ay-good'; }
       }
+    } else {
+      displayVal = def.ph;
     }
+
+    // Training tile: if cascade is open but not completed, show amber
+    const cascadeOpen = def.id==='trainingType' && document.getElementById('cascade-panel')?.classList.contains('open');
+    if (cascadeOpen && !has) tileClass = 'action-tile training-open';
 
     if (locked) tileClass += ' locked';
     const tile = document.createElement('div');
     tile.className = tileClass;
+    tile.dataset.field = def.id;
+
     tile.innerHTML = `
       <div class="at-top">
         <div class="at-check">${has ? '✓' : ''}</div>
         <div class="at-body">
           <div class="at-label">${def.label}</div>
-          <div class="at-value${has?'':' empty'}">${displayVal}</div>
+          <div class="at-value${has?'':' empty'}" data-edit="${def.id}">${displayVal}</div>
+          <div class="at-edit-hint">tap to edit</div>
         </div>
         <div class="at-right">
-          ${!locked ? `<button class="at-info" onclick="openInfoSheet(event,'${def.id}')" title="Why this matters">i</button>` : ''}
-          ${has && !locked ? `<button class="at-clear" onclick="clearField(event,'${def.id}')">Clear</button>` : ''}
+          <button class="at-info" onclick="openInfoSheet(event,'${def.id}')" title="Why this matters">i</button>
         </div>
       </div>
       ${has ? `<div class="at-stamp"><div class="at-stamp-dot"></div>${stampText}</div>` : ''}
@@ -1425,21 +1435,50 @@ function renderActionTiles() {
     `;
 
     if (!locked) {
+      // Clicking the value text = open edit modal
+      tile.querySelector('[data-edit]')?.addEventListener('click', e => {
+        e.stopPropagation();
+        if (!has) return; // empty value = handled by tile click
+        if (def.id==='trainingType') return; // training edited via cascade
+        openModal(def.id, te);
+      });
+
+      // Clicking the tile body (not value, not info) = toggle check
       tile.addEventListener('click', e => {
-        if (e.target.closest('.at-info')||e.target.closest('.at-clear')||e.target.closest('.training-cascade')) return;
-        if (def.id==='trainingType') toggleCascade(tile);
-        else openModal(def.id, te);
+        if (e.target.closest('.at-info')||e.target.closest('.training-cascade')) return;
+        if (e.target.closest('[data-edit]') && has && def.id!=='trainingType') return;
+        if (def.id==='trainingType') {
+          toggleCascade(tile); return;
+        }
+        if (has) {
+          // Toggle off = clear the field
+          clearFieldDirect(def.id);
+        } else {
+          openModal(def.id, te);
+        }
       });
     }
     el.appendChild(tile);
   });
 }
 
+function confirmClearCascade() {
+  if(confirm('Clear all workout entries? This cannot be undone.')) {
+    cascadeSets={};activeCascadeType=null;
+    // Rebuild the cascade panel
+    const panel=document.getElementById('cascade-panel');
+    if(panel){panel.innerHTML='';panel.dataset.built='';buildCascadeTypeGrid(panel);}
+    toast('Workout cleared','info');
+  }
+}
+
 // ── TRAINING CASCADE ──────────────────────────────────────────────────────
 function toggleCascade(tile) {
   const panel = tile.querySelector('#cascade-panel'); if (!panel) return;
   if (panel.classList.contains('open')) {
-    panel.classList.remove('open'); activeCascadeType=null; return;
+    // Collapsing — NEVER marks training as complete
+    panel.classList.remove('open');
+    return;
   }
   panel.classList.add('open');
   if (!panel.dataset.built) { buildCascadeTypeGrid(panel); panel.dataset.built='1'; }
@@ -1505,11 +1544,16 @@ function renderCascadeExercises(p,key,area) {
     exWrap.appendChild(hw);
   }
   area.appendChild(exWrap);
-  // Complete button
-  const cb=document.createElement('button');cb.className='tc-complete';
+  // Complete + Clear buttons side by side
+  const btnRow=document.createElement('div');btnRow.style.cssText='display:flex;gap:8px;margin:0 20px 16px';
+  const cb=document.createElement('button');cb.className='tc-complete';cb.style.flex='1';cb.style.margin='0';
   cb.textContent=`${p.lbl} Complete`;
   cb.onclick=e=>{e.stopPropagation();completeCascade(key);};
-  area.appendChild(cb);
+  const clr=document.createElement('button');clr.className='tc-complete';clr.style.cssText='flex:0 0 auto;margin:0;background:rgba(224,85,85,.08);border-color:rgba(224,85,85,.22);color:var(--red)';
+  clr.textContent='Clear';
+  clr.onclick=e=>{e.stopPropagation();confirmClearCascade();};
+  btnRow.appendChild(cb);btnRow.appendChild(clr);
+  area.appendChild(btnRow);
 }
 
 function renderCascadeFF(p,key,area) {
@@ -1523,10 +1567,15 @@ function renderCascadeFF(p,key,area) {
     grid.innerHTML+=`<div class="tc-field"><label class="tc-fl">${d.lbl}</label><input class="tc-fi" id="ffcas-${f}" type="number" step="${d.step}" placeholder="—"/></div>`;
   });
   area.appendChild(grid);
-  const cb=document.createElement('button');cb.className='tc-complete';
-  cb.textContent=`Log ${p.lbl}`;
-  cb.onclick=e=>{e.stopPropagation();completeCascadeFF(key,p);};
-  area.appendChild(cb);
+  const btnRow2=document.createElement('div');btnRow2.style.cssText='display:flex;gap:8px;margin:0 20px 16px';
+  const cb2=document.createElement('button');cb2.className='tc-complete';cb2.style.cssText='flex:1;margin:0';
+  cb2.textContent=`Log ${p.lbl}`;
+  cb2.onclick=e=>{e.stopPropagation();completeCascadeFF(key,p);};
+  const clr2=document.createElement('button');clr2.className='tc-complete';clr2.style.cssText='flex:0 0 auto;margin:0;background:rgba(224,85,85,.08);border-color:rgba(224,85,85,.22);color:var(--red)';
+  clr2.textContent='Clear';
+  clr2.onclick=e=>{e.stopPropagation();confirmClearCascade();};
+  btnRow2.appendChild(cb2);btnRow2.appendChild(clr2);
+  area.appendChild(btnRow2);
 }
 
 function addCascadeSet(exId,type,e) {
@@ -1595,7 +1644,8 @@ async function completeCascade(key) {
 
   try {
     for(const e of entries)await apiPost({action:'logSet',entry:e});
-    await apiPost({action:'logDay',entry:{...te,status:isTodayDraft()?'draft':'open',loggedBy:LOGGED_BY}});
+    const status=isTodayDraft()?'draft':'open';
+    await apiPost({action:'logDay',entry:{...te,status,loggedBy:LOGGED_BY}});
   } catch{}
 }
 
@@ -1610,7 +1660,11 @@ async function completeCascadeFF(key,p) {
   let te=dailyLog.find(e=>e.date===todayKey());if(!te){te={date:todayKey()};dailyLog.push(te);}
   te.trainingType=p.lbl;te.trainingType_loggedAt=nowStamp();SC(CK.d,dailyLog);
   renderAll();toast(`${p.lbl} logged`,'ok');
-  try{await apiPost({action:'logSet',entry});await apiPost({action:'logDay',entry:{...te,status:isTodayDraft()?'draft':'open',loggedBy:LOGGED_BY}});}catch{}
+  try{
+    const status=isTodayDraft()?'draft':'open';
+    await apiPost({action:'logSet',entry});
+    await apiPost({action:'logDay',entry:{...te,status,loggedBy:LOGGED_BY}});
+  }catch{}
 }
 
 function getLastRef(exId){
@@ -1622,14 +1676,17 @@ function checkPR(exId,s){if(!s.weight||!s.reps)return false;const vol=parseFloat
 function findEx(id){for(const p of Object.values(P)){if(p.exs){const e=p.exs.find(e=>e.id===id);if(e)return e;}}return null;}
 
 // ── CLEAR FIELD ────────────────────────────────────────────────────────────
-async function clearField(e, fieldId) {
-  e.stopPropagation();
+async function clearFieldDirect(fieldId) {
   let te=dailyLog.find(e=>e.date===todayKey());if(!te)return;
   delete te[fieldId]; delete te[fieldId+'_loggedAt'];
   SC(CK.d,dailyLog); renderAll();
   const labels={wakeTime:'Wake time',weight:'Weight',calories:'Calories',protein:'Protein',trainingType:'Training'};
   toast(`${labels[fieldId]||fieldId} cleared`,'info');
   if(isTodayDraft())try{await apiPost({action:'logDay',entry:{...te,status:'draft',loggedBy:LOGGED_BY}});}catch{}
+}
+async function clearField(e, fieldId) {
+  if(e)e.stopPropagation();
+  await clearFieldDirect(fieldId);
 }
 
 // ── MODALS ─────────────────────────────────────────────────────────────────
@@ -1652,20 +1709,30 @@ function buildNumModal(title,unit,val){
 async function saveModal() {
   const btn=document.querySelector('.msave');if(!btn)return;
   let val='';
-  if(curField==='wakeTime') val=document.getElementById('m-time')?.value||'';
-  else val=document.getElementById('m-num')?.value||'';
+  if(curField==='wakeTime'){
+    // Always store as plain HH:MM string
+    const raw=document.getElementById('m-time')?.value||'';
+    val=raw.trim().slice(0,5); // e.g. "04:30"
+  } else {
+    val=document.getElementById('m-num')?.value||'';
+  }
+  if(!val){closeModal();return;}
   btn.className='msave saving';btn.textContent='Saving…';
 
   let te=dailyLog.find(e=>e.date===todayKey());
   if(!te){te={date:todayKey()};dailyLog.push(te);}
-  if(val!==''){
-    te[curField]=['weight','calories','protein'].includes(curField)?Number(val):val;
-    te[curField+'_loggedAt']=nowStamp();
-  } else delete te[curField];
+  // Store wakeTime as string, numerics as Number
+  if(curField==='wakeTime'){
+    te.wakeTime = val; // plain "04:30"
+  } else {
+    te[curField] = Number(val);
+  }
+  te[curField+'_loggedAt'] = nowStamp();
   SC(CK.d,dailyLog); renderAll();
 
   try {
-    const status=isTodayDraft()?'draft':'open';
+    // Always 'open' unless Day Complete was explicitly pressed
+    const status = isTodayCommitted() ? 'committed' : isTodayDraft() ? 'draft' : 'open';
     await apiPost({action:'logDay',entry:{...te,status,loggedBy:LOGGED_BY}});
     btn.className='msave saved';btn.textContent='Saved ✓';
     toast('Saved'); setTimeout(closeModal,480);
@@ -1740,40 +1807,160 @@ function calcStreak() {
   return n;
 }
 
-// Status cards — use serverAnalytics if available, else compute locally
+const setText=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
+
+// ── WHOOP-STYLE ARC GAUGES + CHIPS ────────────────────────────────────────
 function renderStatusCards() {
   const a = serverAnalytics || computeLocalAnalytics();
-
-  // Calories
-  setText('sc-cal-val', a.rolling3?.calories!=null ? a.rolling3.calories+' kcal' : '—');
-  setText('sc-cal-label', a.caloriePhase||'Waiting for data');
-  setStatusChip('sc-cal-status', a.calorieStatus||'gray', a.caloriePhase||'Waiting');
-  setText('sc-cal-sub', a.rolling3?.calories!=null ? `3-day avg vs goal ${goals.caloriesMin}–${goals.caloriesMax} kcal` : '');
-
-  // Protein
-  setText('sc-pro-val', a.rolling3?.protein!=null ? a.rolling3.protein+'g' : '—');
-  setText('sc-pro-label', a.proteinLabel||'Waiting for data');
-  setStatusChip('sc-pro-status', a.proteinStatus||'gray', a.proteinLabel||'Waiting');
-
-  // Training
-  setText('sc-train-val', a.trainingSessions7d!=null ? a.trainingSessions7d+' / 7 days' : '—');
-  setText('sc-train-label', a.trainingLabel||'Waiting for data');
-  setStatusChip('sc-train-status', a.trainingStatus||'gray', a.trainingLabel||'Waiting');
-
-  // Weight
-  const wt = a.weightTrend||{};
-  setText('sc-wt-val', wt.currentWeight!=null ? parseFloat(wt.currentWeight).toFixed(1)+' lbs' : '—');
-  setText('sc-wt-label', wt.label||'Log weight to see trend');
-  setStatusChip('sc-wt-status', wt.status||'gray', wt.status||'—');
-  setText('sc-wt-proj', wt.projectedGoalDate ? `Goal (~${goals.weightGoal}lbs) by ${wt.projectedGoalDate}` : '');
+  renderArcGauges(a);
+  renderPhaseChips(a);
+  renderSparkline(a);
 }
 
-function setText(id,val){const e=document.getElementById(id);if(e)e.textContent=val;}
-function setStatusChip(id,status,label){
-  const e=document.getElementById(id);if(!e)return;
-  e.className='sc-status '+status;
-  const labels={green:'On Track',amber:'Watch',red:'Alert',gold:'Exceeding',gray:'Waiting',blue:'Surplus'};
-  e.textContent=labels[status]||label||status;
+function drawArc(svg, pct, color, trackColor) {
+  const W=88, H=56, cx=W/2, cy=H-4, R=34, sw=6;
+  const clamp=Math.max(0,Math.min(1,pct||0));
+  // Arc spans 180° (π) from left to right, bottom-anchored
+  const startAngle=Math.PI, sweep=Math.PI;
+  const endAngle=startAngle+sweep*clamp;
+  const x1=cx+R*Math.cos(startAngle), y1=cy+R*Math.sin(startAngle);
+  const x2=cx+R*Math.cos(endAngle),   y2=cy+R*Math.sin(endAngle);
+  const large=clamp>0.5?1:0;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svg.setAttribute('width',W); svg.setAttribute('height',H);
+  svg.innerHTML=`
+    <path d="M ${cx-R} ${cy} A ${R} ${R} 0 0 1 ${cx+R} ${cy}"
+      fill="none" stroke="${trackColor||'rgba(255,255,255,.06)'}" stroke-width="${sw}" stroke-linecap="round"/>
+    ${clamp>0?`<path d="M ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2}"
+      fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round"
+      style="filter:drop-shadow(0 0 4px ${color}44)"/>`:''}`;
+}
+
+function renderArcGauges(a) {
+  const el=document.getElementById('rp-arcs'); if(!el)return; el.innerHTML='';
+  const te=dailyLog.find(e=>e.date===todayKey())||{};
+
+  const gauges=[
+    {
+      lbl:'Calories', unit:'kcal',
+      val:a.rolling3?.calories!=null?a.rolling3.calories:null,
+      pct:a.rolling3?.calories!=null?Math.min(a.rolling3.calories/(goals.caloriesMax||1500),1):0,
+      color:a.calorieStatus==='green'?'#3fcf6e':a.calorieStatus==='red'?'#e05555':a.calorieStatus==='blue'?'#5a9cf5':'#c9a84c',
+      status:a.caloriePhase||'—',
+      statusCls:a.calorieStatus||'gray',
+    },
+    {
+      lbl:'Protein', unit:'g',
+      val:a.rolling3?.protein!=null?a.rolling3.protein:null,
+      pct:a.rolling3?.protein!=null?Math.min(a.rolling3.protein/(goals.proteinGoal||120),1):0,
+      color:a.proteinStatus==='green'?'#3fcf6e':a.proteinStatus==='amber'?'#f0a030':'#e05555',
+      status:a.proteinLabel||'—',
+      statusCls:a.proteinStatus||'gray',
+    },
+    {
+      lbl:'Training', unit:'/wk',
+      val:a.trainingSessions7d!=null?a.trainingSessions7d:null,
+      pct:a.trainingSessions7d!=null?Math.min(a.trainingSessions7d/(goals.trainingGoal||5),1):0,
+      color:a.trainingStatus==='green'?'#3fcf6e':a.trainingStatus==='gold'?'#c9a84c':'#f0a030',
+      status:a.trainingLabel||'—',
+      statusCls:a.trainingStatus||'gray',
+    },
+  ];
+
+  gauges.forEach(g=>{
+    const arc=document.createElement('div'); arc.className='rp-arc';
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.className='rp-arc-svg';
+    drawArc(svg, g.pct, g.color);
+    const valTxt=g.val!=null?g.val:'—';
+    arc.innerHTML=`
+      <div style="position:relative;width:88px;height:56px">
+        ${svg.outerHTML}
+        <div class="rp-arc-center">
+          <div class="rp-arc-val">${valTxt}</div>
+          <div class="rp-arc-unit">${g.unit}</div>
+        </div>
+      </div>
+      <div class="rp-arc-lbl">${g.lbl}</div>
+      <div class="rp-arc-status" style="color:${g.color}">${g.status.split('·')[0].trim()}</div>`;
+    // Redraw via JS for proper arc rendering
+    const svgEl=arc.querySelector('svg');
+    if(svgEl) drawArc(svgEl, g.pct, g.color);
+    el.appendChild(arc);
+  });
+}
+
+function renderPhaseChips(a) {
+  const el=document.getElementById('rp-chips'); if(!el)return; el.innerHTML='';
+  const chips=[
+    {label:a.caloriePhase||'Calories', cls:a.calorieStatus||'gray'},
+    {label:a.proteinLabel||'Protein',  cls:a.proteinStatus||'gray'},
+    {label:a.trainingLabel||'Training',cls:a.trainingStatus||'gray'},
+    {label:a.weightTrend?.label||'Weight', cls:a.weightTrend?.status||'gray'},
+  ].filter(c=>c.label&&c.label!=='Waiting for data'&&c.label!=='—');
+  if(!chips.length){el.innerHTML='<div class="rp-chip">Waiting for data</div>';return;}
+  chips.forEach(c=>{
+    el.innerHTML+=`<div class="rp-chip ${c.cls}">${c.label}</div>`;
+  });
+}
+
+function renderSparkline(a) {
+  const w=document.getElementById('rp-spark-wrap');
+  const canvas=document.getElementById('rp-spark');
+  const valEl=document.getElementById('rp-spark-val');
+  const projEl=document.getElementById('rp-spark-proj');
+  if(!canvas)return;
+
+  const wt=a?.weightTrend||{};
+  if(valEl) valEl.textContent=wt.currentWeight?parseFloat(wt.currentWeight).toFixed(1)+' lbs':'—';
+  if(projEl) projEl.textContent=wt.projectedGoalDate?`Goal (~${goals.weightGoal}lbs) → ${wt.projectedGoalDate}`:'';
+
+  // draw 14-day weight sparkline
+  const cut=new Date(); cut.setDate(cut.getDate()-13);
+  const data=[...dailyLog]
+    .filter(e=>e.weight&&new Date(e.date+'T00:00:00')>=cut)
+    .sort((a,b)=>a.date.localeCompare(b.date));
+
+  const ctx=canvas.getContext('2d');
+  const W=canvas.parentElement.clientWidth-32||260; const H=44;
+  canvas.width=W; canvas.height=H;
+  ctx.clearRect(0,0,W,H);
+
+  if(data.length<2){
+    ctx.fillStyle='rgba(255,255,255,.1)';ctx.font='9px Outfit';ctx.textAlign='center';
+    ctx.fillText('Log weight to see trend',W/2,H/2+3);
+    return;
+  }
+  const vals=data.map(d=>d.weight);
+  const mn=Math.min(...vals)*.998, mx=Math.max(...vals)*1.002;
+  const x=i=>i/(data.length-1)*W;
+  const y=v=>H-4-((v-mn)/(mx-mn||1))*(H-8);
+
+  // gradient fill
+  const grad=ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'rgba(63,207,110,.18)');
+  grad.addColorStop(1,'transparent');
+  ctx.beginPath();
+  data.forEach((d,i)=>i===0?ctx.moveTo(x(i),y(d.weight)):ctx.lineTo(x(i),y(d.weight)));
+  ctx.lineTo(x(data.length-1),H);ctx.lineTo(0,H);ctx.closePath();
+  ctx.fillStyle=grad;ctx.fill();
+
+  // line
+  ctx.beginPath();ctx.strokeStyle='#3fcf6e';ctx.lineWidth=1.5;ctx.lineJoin='round';
+  data.forEach((d,i)=>i===0?ctx.moveTo(x(i),y(d.weight)):ctx.lineTo(x(i),y(d.weight)));
+  ctx.stroke();
+
+  // goal line
+  if(goals.weightGoal&&goals.weightGoal>=mn&&goals.weightGoal<=mx){
+    const gy=y(goals.weightGoal);
+    ctx.setLineDash([3,4]);ctx.strokeStyle='rgba(201,168,76,.35)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // endpoint dot
+  const lx=x(data.length-1), ly=y(data.at(-1).weight);
+  ctx.fillStyle='#3fcf6e';ctx.beginPath();ctx.arc(lx,ly,3,0,Math.PI*2);ctx.fill();
 }
 
 function computeLocalAnalytics() {
