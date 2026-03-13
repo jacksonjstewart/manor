@@ -916,37 +916,27 @@ async function syncAll() {
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 function dismissLoader() {
   const s = document.getElementById('loading-screen');
-  if (s) s.classList.add('done');
+  if (s) { s.classList.add('done'); setTimeout(()=>{ s.style.display='none'; }, 400); }
 }
 
-// Failsafe: always dismiss on DOMContentLoaded regardless of network/font state
-document.addEventListener('DOMContentLoaded', () => {
+// Script is at bottom of <body> — DOM already ready, call directly
+(async function init() {
   try {
     dailyLog   = getFromCache(CACHE_KEYS.daily)   || [];
     workoutLog = getFromCache(CACHE_KEYS.workout) || [];
     goals      = getFromCache(CACHE_KEYS.goals)   || goals;
     campaign   = getFromCache(CACHE_KEYS.campaign)|| null;
     API_URL    = localStorage.getItem('manor_api_url') || '';
-
-    if (localStorage.getItem('manor_api_url'))
-      document.getElementById('s-api-url').value = localStorage.getItem('manor_api_url');
-
+    if (API_URL) document.getElementById('s-api-url').value = API_URL;
     renderAll();
     buildWorkoutTypeGrid();
   } catch(e) { console.warn('Init error:', e); }
-
-  // Always dismiss — fonts/network cannot block this
-  setTimeout(dismissLoader, 300);
-});
-
-// Full sync after everything (fonts, images) has loaded
-window.addEventListener('load', async () => {
   dismissLoader();
   try {
     if (API_URL) await syncAll();
     else setSyncStatus('error', 'SET API URL IN SETTINGS');
   } catch(e) { setSyncStatus('error', 'OFFLINE'); }
-});
+})();
 
 // ─── RENDER ALL ───────────────────────────────────────────────────────────────
 function renderAll() {
