@@ -291,8 +291,8 @@ canvas{display:block;width:100%!important}
 .sparkline-wrap{height:60px;position:relative;margin:8px 0}
 
 /* Loading */
-#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity 0.5s}
-#loading-screen.done{opacity:0;pointer-events:none}
+#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity 0.4s}
+#loading-screen.done{opacity:0;pointer-events:none;display:none}
 #loading-wordmark{font-family:'Cormorant Garamond',serif;font-size:64px;font-weight:300;color:#fff;letter-spacing:8px;text-transform:uppercase;animation:fade-in 0.8s ease both}
 #loading-sub{font-size:9px;font-weight:700;letter-spacing:6px;color:var(--text3);text-transform:uppercase;margin-top:8px;animation:fade-in 0.8s 0.2s ease both}
 @keyframes fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -914,26 +914,38 @@ async function syncAll() {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
+function dismissLoader() {
+  const s = document.getElementById('loading-screen');
+  if (s) s.classList.add('done');
+}
+
+// Failsafe: always dismiss on DOMContentLoaded regardless of network/font state
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    dailyLog   = getFromCache(CACHE_KEYS.daily)   || [];
+    workoutLog = getFromCache(CACHE_KEYS.workout) || [];
+    goals      = getFromCache(CACHE_KEYS.goals)   || goals;
+    campaign   = getFromCache(CACHE_KEYS.campaign)|| null;
+    API_URL    = localStorage.getItem('manor_api_url') || '';
+
+    if (localStorage.getItem('manor_api_url'))
+      document.getElementById('s-api-url').value = localStorage.getItem('manor_api_url');
+
+    renderAll();
+    buildWorkoutTypeGrid();
+  } catch(e) { console.warn('Init error:', e); }
+
+  // Always dismiss — fonts/network cannot block this
+  setTimeout(dismissLoader, 300);
+});
+
+// Full sync after everything (fonts, images) has loaded
 window.addEventListener('load', async () => {
-  // Load from cache immediately
-  dailyLog   = getFromCache(CACHE_KEYS.daily)   || [];
-  workoutLog = getFromCache(CACHE_KEYS.workout) || [];
-  goals      = getFromCache(CACHE_KEYS.goals)   || goals;
-  campaign   = getFromCache(CACHE_KEYS.campaign)|| null;
-  API_URL    = localStorage.getItem('manor_api_url') || '';
-
-  if(localStorage.getItem('manor_api_url'))
-    document.getElementById('s-api-url').value = localStorage.getItem('manor_api_url');
-
-  renderAll();
-  buildWorkoutTypeGrid();
-
-  // Hide loading screen
-  setTimeout(()=>document.getElementById('loading-screen').classList.add('done'), 800);
-
-  // Sync from server if URL set
-  if (API_URL) await syncAll();
-  else setSyncStatus('error','SET API URL IN SETTINGS');
+  dismissLoader();
+  try {
+    if (API_URL) await syncAll();
+    else setSyncStatus('error', 'SET API URL IN SETTINGS');
+  } catch(e) { setSyncStatus('error', 'OFFLINE'); }
 });
 
 // ─── RENDER ALL ───────────────────────────────────────────────────────────────
