@@ -291,7 +291,7 @@ canvas{display:block;width:100%!important}
 .sparkline-wrap{height:60px;position:relative;margin:8px 0}
 
 /* Loading */
-#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity 0.6s ease}
+#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity 0.6s ease;cursor:pointer}
 #loading-screen.done{opacity:0;pointer-events:none}
 #loading-screen.done #loading-wordmark,#loading-screen.done #loading-sub{display:none}
 #loading-wordmark{font-family:'Cormorant Garamond',serif;font-size:64px;font-weight:300;color:#fff;letter-spacing:8px;text-transform:uppercase;animation:fade-in 0.8s ease both}
@@ -322,10 +322,11 @@ canvas{display:block;width:100%!important}
 <div id="top-bar"><div id="top-bar-fill"></div></div>
 <div id="toast-wrap"></div>
 
-<!-- LOADING SCREEN -->
-<div id="loading-screen">
+<!-- LOADING SCREEN - click anywhere to dismiss, auto-dismisses in 1s -->
+<div id="loading-screen" onclick="dismissLoader()" style="cursor:pointer">
   <div id="loading-wordmark">MANOR</div>
   <div id="loading-sub">Health · Fitness · Wellness</div>
+  <div style="position:absolute;bottom:32px;font-size:9px;font-weight:600;letter-spacing:3px;color:#2a2a2a;text-transform:uppercase">Tap to enter</div>
 </div>
 
 <!-- MAIN APP -->
@@ -924,8 +925,8 @@ function dismissLoader() {
   } catch(e) {}
 }
 
-// Nuclear failsafe — dismiss after 2s no matter what
-setTimeout(dismissLoader, 2000);
+// Nuclear failsafe — dismiss after 500ms no matter what
+setTimeout(dismissLoader, 500);
 
 // Safe init — each step wrapped so one failure can't block dismissal
 try { dailyLog   = getFromCache(CACHE_KEYS.daily)   || []; } catch(e) { dailyLog = []; }
