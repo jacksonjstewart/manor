@@ -545,7 +545,8 @@ canvas{display:block;width:100%!important}
           <label class="fl">Apps Script URL</label>
           <input id="sg-url" class="fi" type="text" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:11px"/>
         </div>
-        <button class="btn btn-gold btn-full" onclick="saveUrl()">Save & Sync</button>
+        <div id="sg-url-note" style="font-size:10px;color:var(--t2);margin-top:8px;font-style:italic">Using embedded default URL</div>
+        <button class="btn btn-gold btn-full" style="margin-top:10px" onclick="saveUrl()">Save & Sync</button>
       </div>
       <div class="sl">Data</div>
       <div class="set-card">
@@ -583,7 +584,8 @@ canvas{display:block;width:100%!important}
 
 <script>
 // ─── STATE ───────────────────────────────────────────────────────
-let API='', dailyLog=[], workoutLog=[], goals={wakeGoal:'04:30',weightGoal:140,caloriesMin:1400,caloriesMax:1500,proteinGoal:120}, campaign=null;
+const DEFAULT_API='https://script.google.com/macros/s/AKfycbyR8OUhzK0P7mQOm65LWyyTL7DqkukdTsEb-MLVdcuzkzW9rduxTFqNaUWPD0tQham6Mg/exec';
+let API=localStorage.getItem('manor_api')||DEFAULT_API, dailyLog=[], workoutLog=[], goals={wakeGoal:'04:30',weightGoal:140,caloriesMin:1400,caloriesMax:1500,proteinGoal:120}, campaign=null;
 let selWT=null, sessId=null, sessSets={}, selTrain='', curView='today', curATab='body';
 const CK={d:'md',w:'mw',g:'mg',c:'mc',s:'ms'};
 const GC=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch{return null}};
@@ -669,7 +671,7 @@ try{dailyLog=GC(CK.d)||[]}catch{dailyLog=[]}
 try{workoutLog=GC(CK.w)||[]}catch{workoutLog=[]}
 try{goals=GC(CK.g)||goals}catch{}
 try{campaign=GC(CK.c)||null}catch{}
-try{API=localStorage.getItem('manor_api')||'';if(API)document.getElementById('sg-url').value=API}catch{}
+try{API=localStorage.getItem('manor_api')||DEFAULT_API;const ov=localStorage.getItem('manor_api');if(document.getElementById('sg-url'))document.getElementById('sg-url').value=ov||'';}catch{}
 try{renderAll()}catch(e){console.warn('renderAll',e)}
 try{buildWTGrid()}catch(e){console.warn('buildWTGrid',e)}
 dismissLoader();
@@ -1130,13 +1132,16 @@ function renderSettings(){
   document.getElementById('sg-dc').textContent=dailyLog.length;
   document.getElementById('sg-wc').textContent=workoutLog.length;
   const ls=GC(CK.s);document.getElementById('sg-ls').textContent=ls?new Date(ls).toLocaleTimeString():'—';
+  const ov=localStorage.getItem('manor_api');
+  document.getElementById('sg-url').value=ov||'';
+  document.getElementById('sg-url-note').textContent=ov?'Custom URL active — clear to restore default':'Using embedded default URL';
 }
 async function saveGoals(){
   goals={wakeGoal:document.getElementById('sg-wake').value,weightGoal:parseFloat(document.getElementById('sg-wt').value)||140,caloriesMin:parseInt(document.getElementById('sg-calmin').value)||1400,caloriesMax:parseInt(document.getElementById('sg-calmax').value)||1500,proteinGoal:parseInt(document.getElementById('sg-pro').value)||120};
   SC(CK.g,goals);renderAll();toast('Goals saved');
   try{await apiPost({action:'saveGoals',goals});}catch{}
 }
-function saveUrl(){const url=document.getElementById('sg-url').value.trim();if(!url){toast('Enter a URL','err');return;}API=url;localStorage.setItem('manor_api',url);toast('Saved');syncAll();}
+function saveUrl(){const url=document.getElementById('sg-url').value.trim();if(!url){localStorage.removeItem('manor_api');API=DEFAULT_API;toast('Cleared — using default URL');renderSettings();return;}API=url;localStorage.setItem('manor_api',url);toast('URL saved');syncAll();}
 function clearCache(){Object.values(CK).forEach(k=>localStorage.removeItem(k));toast('Cache cleared');}
 
 // ─── NAV ─────────────────────────────────────────────────────────
