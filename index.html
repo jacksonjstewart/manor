@@ -16,18 +16,15 @@ body{font-family:'Outfit',sans-serif;color:#e8e8e8;-webkit-font-smoothing:antial
 :root{
   --bg:#080808;--s1:#0c0c0c;--s2:#111;--s3:#181818;--s4:#202020;--s5:#282828;
   --b0:rgba(255,255,255,.042);--b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.14);--b3:rgba(255,255,255,.22);
-  --t0:#e8e8e8;--t1:#aaa;--t2:#717171;--t3:#3e3e3e;--t4:#242424;
+  --t0:#e8e8e8;--t1:#bbb;--t2:#888;--t3:#555;--t4:#333;
   --gold:#c9a84c;--gold2:#e8c97a;--gold3:#a8882c;
   --gd:rgba(201,168,76,.09);--gb:rgba(201,168,76,.26);--gb2:rgba(201,168,76,.48);
   --green:#3fcf6e;--gn:rgba(63,207,110,.08);--gnb:rgba(63,207,110,.26);
   --amber:#f0a030;--red:#e05555;--blue:#5a9cf5;--purple:#a87fd4;
-  /* action tile base: deep dark crimson-tinted background */
-  --tile-bg:rgba(255,255,255,.028);
-  --tile-bdr:rgba(255,255,255,.07);
-  --tile-done-bg:rgba(63,207,110,.07);
-  --tile-done-bdr:rgba(63,207,110,.22);
-  --tile-warn-bg:rgba(240,160,48,.06);
-  --tile-warn-bdr:rgba(240,160,48,.2);
+  /* dark red tile palette */
+  --crimson:#c0392b;--crimson2:#e74c3c;
+  --tile-bg:rgba(160,40,30,.08);
+  --tile-bdr:rgba(192,57,43,.22);
   --nav:68px;--safe:env(safe-area-inset-bottom,0px);--r:13px;
 }
 ::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:var(--s4)}
@@ -131,28 +128,27 @@ body{font-family:'Outfit',sans-serif;color:#e8e8e8;-webkit-font-smoothing:antial
 
 .action-tile{
   border-radius:14px;
-  background:rgba(201,168,76,.04);
-  border:1px solid rgba(201,168,76,.14);
+  background:var(--tile-bg);
+  border:1px solid var(--tile-bdr);
   overflow:hidden;
   transition:border-color .2s,background .2s,box-shadow .2s,transform .12s;
   cursor:pointer;user-select:none;
   position:relative;
 }
-.action-tile:hover{border-color:rgba(201,168,76,.26);background:rgba(201,168,76,.07)}
+.action-tile:hover{border-color:rgba(192,57,43,.38);background:rgba(160,40,30,.12)}
 .action-tile:active{transform:scale(.988)}
 .action-tile.done{
-  background:rgba(63,207,110,.06);
-  border-color:rgba(63,207,110,.28);
-  box-shadow:0 1px 20px rgba(63,207,110,.04);
+  background:rgba(63,207,110,.07);
+  border-color:rgba(63,207,110,.3);
+  box-shadow:0 1px 20px rgba(63,207,110,.05);
 }
 .action-tile.warn{
-  background:rgba(240,160,48,.06);
-  border-color:rgba(240,160,48,.26);
+  background:rgba(240,160,48,.07);
+  border-color:rgba(240,160,48,.28);
 }
-/* training open = amber */
 .action-tile.training-open{
-  background:rgba(240,160,48,.05);
-  border-color:rgba(240,160,48,.22);
+  background:rgba(240,160,48,.06);
+  border-color:rgba(240,160,48,.24);
 }
 
 /* tile top row */
@@ -163,7 +159,7 @@ body{font-family:'Outfit',sans-serif;color:#e8e8e8;-webkit-font-smoothing:antial
 }
 .at-check{
   width:32px;height:32px;border-radius:50%;
-  border:1.5px solid var(--b2);
+  border:1.5px solid rgba(192,57,43,.4);
   flex-shrink:0;display:flex;align-items:center;justify-content:center;
   transition:all .25s cubic-bezier(.4,0,.2,1);
   font-size:15px;color:transparent;
@@ -179,11 +175,12 @@ body{font-family:'Outfit',sans-serif;color:#e8e8e8;-webkit-font-smoothing:antial
 .at-body{flex:1;min-width:0}
 .at-label{
   font-size:9px;font-weight:700;letter-spacing:3px;
-  color:var(--t3);text-transform:uppercase;
-  margin-bottom:6px;transition:color .2s;
+  color:var(--crimson2);text-transform:uppercase;
+  margin-bottom:6px;transition:color .2s;opacity:.8;
 }
-.action-tile.done .at-label{color:rgba(63,207,110,.6)}
-.action-tile.warn .at-label{color:rgba(240,160,48,.6)}
+.action-tile.done .at-label{color:rgba(63,207,110,.7);opacity:1}
+.action-tile.warn .at-label{color:rgba(240,160,48,.8);opacity:1}
+.action-tile.training-open .at-label{color:rgba(240,160,48,.7)}
 
 .at-value{
   font-family:'Cormorant Garamond',serif;font-weight:300;font-size:40px;
@@ -364,21 +361,24 @@ body{font-family:'Outfit',sans-serif;color:#e8e8e8;-webkit-font-smoothing:antial
 #ver-badge:hover{color:var(--t2)}
 #day-complete-wrap{padding:0 24px;margin-bottom:24px}
 .dc-btn{
-  width:100%;background:none;border:1px solid var(--b1);
-  color:var(--t2);border-radius:var(--r);
+  width:100%;background:none;border:1px solid var(--b0);
+  color:var(--t4);border-radius:var(--r);
   padding:13px 20px;font-family:'Outfit',sans-serif;
   font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
-  cursor:pointer;transition:all .22s;
+  cursor:not-allowed;transition:all .22s;
   display:flex;align-items:center;justify-content:center;gap:9px;
+  opacity:.45;
 }
-.dc-btn:hover{border-color:var(--gb);color:var(--gold)}
+.dc-btn.ready{
+  border-color:var(--gb);color:var(--gold);background:var(--gd);
+  opacity:1;cursor:pointer;
+}
+.dc-btn.ready:hover{background:rgba(201,168,76,.14);border-color:var(--gb2)}
 .dc-btn.done{
   background:rgba(63,207,110,.05);border-color:var(--gnb);
-  color:var(--green);cursor:default;pointer-events:none;
+  color:var(--green);cursor:default;opacity:1;pointer-events:none;
 }
-.dc-pulse{
-  width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;
-}
+.dc-pulse{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
 #dc-sub{font-size:9px;color:var(--t3);margin-top:7px;text-align:center;letter-spacing:.5px}
 
 /* ─── RECENT DAYS ───────────────────────────────────────────────────── */
@@ -600,6 +600,21 @@ canvas{display:block;width:100%!important}
 .pr-badge.improved{background:rgba(63,207,110,.1);color:var(--green);border:1px solid var(--gnb)}
 .pr-badge.consistent{background:var(--gd);color:var(--gold);border:1px solid var(--gb)}
 .pr-badge.regressed{background:rgba(255,255,255,.04);color:var(--t2);border:1px solid var(--b0)}
+/* ─── MINIMAL ANALYTICS ─────────────────────────────────────────────── */
+.an-section{margin-bottom:28px}
+.an-label{font-size:8.5px;font-weight:700;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:12px}
+.an-stat-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.an-big{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;color:#fff;letter-spacing:-2px;line-height:1}
+.an-unit{font-size:14px;color:var(--t2);margin-left:4px;letter-spacing:0}
+.an-delta{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--t2);letter-spacing:-.5px}
+.an-delta.pos{color:var(--amber)}.an-delta.neg{color:var(--green)}
+.an-target{font-size:11px;color:var(--t3);margin-left:auto;align-self:center}
+.an-proj{font-size:11px;color:var(--gold);margin-top:10px;letter-spacing:.2px}
+.an-ring-row{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:4px 0}
+.an-ring-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:80px}
+.an-ring-lbl{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--t3);text-transform:uppercase;text-align:center}
+.an-ring-val{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:300;color:var(--t2)}
+
 .hm{display:flex;gap:3px;flex-wrap:wrap}
 .hm-col{display:flex;flex-direction:column;gap:3px}
 .hm-c{width:10px;height:10px;border-radius:2px;background:var(--s3)}
@@ -820,41 +835,20 @@ canvas{display:block;width:100%!important}
             </div>
           </div>
 
-          <!-- WHOOP-style arc gauges -->
-          <div class="sl" style="padding:0 2px;margin-bottom:14px">Today</div>
+          <div class="sl" style="padding:0 2px;margin-bottom:12px">3-Day Avg</div>
           <div class="rp-arcs" id="rp-arcs"></div>
-
-          <!-- Phase chip row -->
           <div class="rp-chips" id="rp-chips"></div>
 
-          <!-- Weight trend mini sparkline -->
-          <div class="rp-spark-wrap" id="rp-spark-wrap">
+          <div class="rp-spark-wrap">
             <div class="rp-spark-header">
-              <span class="rp-spark-title">Weight Trend</span>
+              <span class="rp-spark-title">Weight</span>
               <span class="rp-spark-val" id="rp-spark-val">—</span>
             </div>
             <canvas id="rp-spark" height="44"></canvas>
             <div class="rp-spark-proj" id="rp-spark-proj"></div>
           </div>
 
-          <!-- Macro Rings -->
-          <div class="rp-rings">
-            <div class="rings-title">Today's Progress</div>
-            <div class="rings-row" id="rings-row"></div>
-          </div>
-
-          <!-- Quote -->
           <div class="rp-quote"><div class="rp-quote-text" id="rp-quote">—</div></div>
-
-          <!-- 7d Cal Bars -->
-          <div class="rp-bars-wrap">
-            <div class="rp-bars-lbl">Calories · 7 Days</div>
-            <div class="rp-bars" id="rp-bars"></div>
-          </div>
-
-          <!-- Recent Sessions -->
-          <div class="sl">Recent Sessions</div>
-          <div class="rp-sess" id="rp-sessions"></div>
         </div>
       </div>
     </div>
@@ -873,40 +867,33 @@ canvas{display:block;width:100%!important}
   <div id="analytics-view" class="view">
     <div class="view-inner">
       <div class="day-header"><div class="dh-dow" style="font-size:36px">Analytics</div><div class="dh-rule" style="margin-top:10px"></div></div>
-      <div class="atabs">
-        <button class="atab on" onclick="aTab('body',this)">Body</button>
-        <button class="atab" onclick="aTab('nutrition',this)">Nutrition</button>
-        <button class="atab" onclick="aTab('training',this)">Training</button>
-        <button class="atab" onclick="aTab('prs',this)">PRs</button>
-      </div>
-      <div id="at-body">
-        <div class="chart-card"><div class="cc-title">Body Weight — 30 Days</div><div class="cc-wrap"><canvas id="c-wt"></canvas></div></div>
-        <div class="stat-row">
-          <div class="stat-c"><div class="stat-l">Current</div><div class="stat-v" id="an-cur">—</div><div class="stat-s">lbs</div></div>
-          <div class="stat-c"><div class="stat-l">30d Change</div><div class="stat-v" id="an-chg">—</div></div>
-          <div class="stat-c"><div class="stat-l">Goal</div><div class="stat-v gold" id="an-goal">—</div><div class="stat-s">lbs</div></div>
+
+      <!-- Weight -->
+      <div class="an-section">
+        <div class="an-label">Body Weight</div>
+        <div class="an-stat-row">
+          <div class="an-big" id="an-cur">—<span class="an-unit">lbs</span></div>
+          <div class="an-delta" id="an-chg"></div>
+          <div class="an-target">Goal <span id="an-goal">—</span> lbs</div>
         </div>
-        <div class="chart-card" id="proj-card" style="display:none">
-          <div class="cc-title">Projection to Goal</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:#fff" id="proj-date">—</div>
-          <div style="font-size:11px;color:var(--t2);margin-top:4px" id="proj-rate">—</div>
+        <div class="chart-card" style="margin-top:10px">
+          <div class="cc-wrap"><canvas id="c-wt"></canvas></div>
         </div>
+        <div class="an-proj" id="an-proj"></div>
       </div>
-      <div id="at-nutrition" style="display:none">
-        <div class="chart-card"><div class="cc-title">Calories — 14 Days</div><div class="cc-wrap"><canvas id="c-cal"></canvas></div></div>
-        <div class="chart-card"><div class="cc-title">Protein — 14 Days</div><div class="cc-wrap"><canvas id="c-pro"></canvas></div></div>
-        <div class="stat-row">
-          <div class="stat-c"><div class="stat-l">Avg Cals (7d)</div><div class="stat-v" id="an-ac">—</div></div>
-          <div class="stat-c"><div class="stat-l">Avg Protein (7d)</div><div class="stat-v" id="an-ap">—</div><div class="stat-s">g</div></div>
-        </div>
+
+      <!-- Nutrition rings -->
+      <div class="an-section">
+        <div class="an-label">Nutrition · 3-Day Avg</div>
+        <div class="an-ring-row" id="an-rings"></div>
       </div>
-      <div id="at-training" style="display:none">
-        <div class="chart-card"><div class="cc-title">Activity — 13 Weeks</div><div class="hm" id="heatmap"></div></div>
-        <div class="chart-card" style="margin-top:12px"><div class="cc-title">Weekly Volume (sets)</div><div class="cc-wrap"><canvas id="c-vol"></canvas></div></div>
+
+      <!-- Activity heatmap -->
+      <div class="an-section">
+        <div class="an-label">Activity · 13 Weeks</div>
+        <div class="hm" id="heatmap" style="margin-top:10px"></div>
       </div>
-      <div id="at-prs" style="display:none">
-        <div class="chart-card"><div class="cc-title">Personal Records</div><div id="pr-list"></div></div>
-      </div>
+
     </div>
   </div>
 
@@ -1143,6 +1130,20 @@ const ACTIONS = [
 // ── BOOT ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
 try { dailyLog   = GC(CK.d) || []; } catch {}
+// Sanitise wakeTime — must always be HH:MM, never a Date string
+dailyLog.forEach(e => {
+  if (e.wakeTime) {
+    const s = String(e.wakeTime).trim();
+    // Valid format: HH:MM (e.g. "04:30")
+    if (/^\d{1,2}:\d{2}$/.test(s)) {
+      e.wakeTime = s.padStart(5,'0'); // ensure "4:30" → "04:30"
+    } else {
+      // Try to extract HH:MM from a Date string like "Sat Dec 01 2024 04:30:00"
+      const m = s.match(/(\d{1,2}):(\d{2})/);
+      e.wakeTime = m ? `${m[1].padStart(2,'0')}:${m[2]}` : '';
+    }
+  }
+});
 try { workoutLog = GC(CK.w) || []; } catch {}
 try { goals      = GC(CK.g) || goals; } catch {}
 try { campaign   = GC(CK.c) || null; } catch {}
@@ -1195,12 +1196,21 @@ async function syncAll() {
     workoutLog = d.workoutLog || [];
     goals      = d.goals      || goals;
     campaign   = d.campaign   || null;
-    // Sync committed/draft sets from server
+    // Sanitise wakeTime values from server
+    const sanitiseWT = (log) => log.forEach(e => {
+      if (!e.wakeTime) return;
+      const s = String(e.wakeTime).trim();
+      if (/^\d{1,2}:\d{2}$/.test(s)) { e.wakeTime = s.padStart(5,'0'); return; }
+      const m = s.match(/(\d{1,2}):(\d{2})/);
+      e.wakeTime = m ? `${m[1].padStart(2,'0')}:${m[2]}` : '';
+    });
+    sanitiseWT(dailyLog);
+    // Only restore committed dates from server — never restore draft from server
+    // (draft is browser-local: user must explicitly press Day Complete)
     if (d.committedDates) committedDays = new Set(d.committedDates);
-    if (d.draftDates)     draftDays     = new Set(d.draftDates);
-    if (d.analytics)      serverAnalytics = d.analytics;
+    if (d.analytics) serverAnalytics = d.analytics;
     SC(CK.d, dailyLog); SC(CK.w, workoutLog); SC(CK.g, goals); SC(CK.c, campaign);
-    SC(CK.committed, [...committedDays]); SC(CK.draft, [...draftDays]);
+    SC(CK.committed, [...committedDays]);
     SC(CK.s, new Date().toISOString());
     const n=new Date(); const t=`${n.getHours()%12||12}:${pad(n.getMinutes())}${n.getHours()>=12?'pm':'am'}`;
     setSS('ok','SYNCED '+t);
@@ -1274,14 +1284,30 @@ function fetchWeather() {
 const isTodayCommitted = () => committedDays.has(todayKey());
 const isTodayDraft     = () => draftDays.has(todayKey());
 
+function allActionsComplete() {
+  const te = dailyLog.find(e=>e.date===todayKey()) || {};
+  return ACTIONS.every(def => {
+    const v = te[def.id];
+    return v != null && v !== '';
+  });
+}
+
 async function markDayComplete() {
   if (isTodayCommitted()) return;
+  if (!allActionsComplete()) {
+    const missing = ACTIONS.filter(def => {
+      const v = (dailyLog.find(e=>e.date===todayKey())||{})[def.id];
+      return v == null || v === '';
+    }).map(def => def.label).join(', ');
+    toast(`Complete all actions first: ${missing}`, 'err');
+    return;
+  }
   const today = todayKey();
   draftDays.add(today);
   SC(CK.draft, [...draftDays]);
   document.getElementById('eod-nudge').classList.remove('on');
   renderAll();
-  toast('Day complete · edits still open until midnight','info');
+  toast('Day complete · edits open until midnight', 'info');
   const te = dailyLog.find(e=>e.date===today) || {date:today};
   try { await apiPost({action:'logDay', entry:{...te, status:'draft', loggedBy:LOGGED_BY}}); } catch {}
 }
@@ -1315,26 +1341,34 @@ function checkAutoCommit() {
 }
 
 function renderDCBtn() {
-  const btn=document.getElementById('dc-btn'); const sub=document.getElementById('dc-sub');
+  const btn=document.getElementById('dc-btn');
+  const sub=document.getElementById('dc-sub');
   if (!btn) return;
+  const allDone = allActionsComplete();
+  const te = dailyLog.find(e=>e.date===todayKey()) || {};
+  const doneCount = ACTIONS.filter(def => {const v=te[def.id]; return v!=null&&v!=='';}).length;
+
   if (isTodayCommitted()) {
-    btn.className='dc-btn done'; document.getElementById('dc-txt').textContent='Day Committed';
+    btn.className='dc-btn done';
+    document.getElementById('dc-txt').textContent='Day Committed';
     sub.textContent='Entries locked permanently';
   } else if (isTodayDraft()) {
-    btn.className='dc-btn done'; document.getElementById('dc-txt').textContent='Day Complete ✓';
+    btn.className='dc-btn done';
+    document.getElementById('dc-txt').textContent='Day Complete ✓';
     sub.textContent='Data sent · edits sync until midnight';
   } else {
-    btn.className='dc-btn'; document.getElementById('dc-txt').textContent='Day Complete';
-    const n=new Date(); const mLeft=(23-n.getHours())*60+(59-n.getMinutes());
-    sub.textContent=mLeft<120?`Auto-commits in ${mLeft}m`:'Mark complete to send today\'s data';
+    btn.className = allDone ? 'dc-btn ready' : 'dc-btn';
+    document.getElementById('dc-txt').textContent='Day Complete';
+    sub.textContent = allDone
+      ? 'All actions logged — tap to mark complete'
+      : `${doneCount} of ${ACTIONS.length} actions logged`;
   }
 }
 
 // ── RENDER ORCHESTRATOR ───────────────────────────────────────────────────
 function renderAll() {
   renderDCBtn(); renderActionTiles();
-  renderRP(); renderStatusCards(); renderRings(); renderCalBars(); renderRPSessions();
-  renderHeaderProgress();
+  renderRP(); renderStatusCards();
   if (curView==='analytics') renderAnalytics();
   if (curView==='campaign')  renderCampaign();
   if (curView==='settings')  renderSettings();
@@ -2116,74 +2150,58 @@ function buildProgCards() {
 }
 
 // ── ANALYTICS ─────────────────────────────────────────────────────────────
-function aTab(name,btn){
-  curATab=name;
-  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
-  ['body','nutrition','training','prs'].forEach(t=>document.getElementById('at-'+t).style.display=t===name?'':'none');
-  renderAnalytics();
-}
+function aTab(){}  // tabs removed - single scrollable analytics page
+
 function renderAnalytics(){
-  if(curATab==='body')renderWeightChart();
-  else if(curATab==='nutrition')renderNutriCharts();
-  else if(curATab==='training')renderTrainingAnalytics();
-  else if(curATab==='prs')renderPRBoard();
-}
-function renderWeightChart(){
-  const el=document.getElementById('c-wt');if(!el)return;
+  // ── Weight section ──
+  const wCanvas=document.getElementById('c-wt');
   const cut=new Date();cut.setDate(cut.getDate()-30);
-  const data=[...dailyLog].filter(e=>e.weight&&new Date(e.date+'T00:00:00')>=cut).sort((a,b)=>a.date.localeCompare(b.date));
-  document.getElementById('an-cur').textContent=data.length?parseFloat(data.at(-1).weight).toFixed(1):'—';
-  document.getElementById('an-goal').textContent=goals.weightGoal||'—';
-  if(data.length>1){const chg=(data.at(-1).weight-data[0].weight).toFixed(1);const e2=document.getElementById('an-chg');e2.textContent=(chg>0?'+':'')+chg;e2.className='stat-v '+(chg<0?'green':'');}
-  else document.getElementById('an-chg').textContent='—';
-  if(data.length>=2)drawLine(el,data.map(d=>d.date.slice(5)),data.map(d=>d.weight),'#c9a84c',goals.weightGoal);
-  // Projection card
+  const wData=[...dailyLog].filter(e=>e.weight&&new Date(e.date+'T00:00:00')>=cut).sort((a,b)=>a.date.localeCompare(b.date));
+  const curW=wData.length?parseFloat(wData.at(-1).weight):null;
+  const bigEl=document.getElementById('an-cur');
+  if(bigEl)bigEl.innerHTML=curW!=null?`${curW.toFixed(1)}<span class="an-unit">lbs</span>`:`—<span class="an-unit">lbs</span>`;
+  setText('an-goal',goals.weightGoal||'—');
+  const chgEl=document.getElementById('an-chg');
+  if(chgEl&&wData.length>1){
+    const chg=(wData.at(-1).weight-wData[0].weight).toFixed(1);
+    chgEl.textContent=(Number(chg)>0?'+':'')+chg+' lbs';
+    chgEl.className='an-delta '+(Number(chg)<0?'neg':'pos');
+  }else if(chgEl){chgEl.textContent='';chgEl.className='an-delta';}
+  if(wCanvas&&wData.length>=2)drawLine(wCanvas,wData.map(d=>d.date.slice(5)),wData.map(d=>d.weight),'#3fcf6e',goals.weightGoal);
+  // Projection
   const a=serverAnalytics||computeLocalAnalytics();
-  const projCard=document.getElementById('proj-card');
-  if(projCard&&a.weightTrend?.projectedGoalDate){
-    projCard.style.display='block';
-    const pd=new Date(a.weightTrend.projectedGoalDate+'T00:00:00');
-    const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    setText('proj-date',`${months[pd.getMonth()]} ${pd.getDate()}, ${pd.getFullYear()}`);
-    setText('proj-rate',a.weightTrend.label||'');
-  } else if(projCard) projCard.style.display='none';
-}
-function renderNutriCharts(){
-  const cut=new Date();cut.setDate(cut.getDate()-14);
-  const data=[...dailyLog].filter(e=>new Date(e.date+'T00:00:00')>=cut).sort((a,b)=>a.date.localeCompare(b.date));
-  const ce=document.getElementById('c-cal'),pe=document.getElementById('c-pro');
-  if(ce)drawBars(ce,data.map(d=>d.date.slice(5)),data.map(d=>d.calories||0),'#c9a84c',goals.caloriesMin,goals.caloriesMax);
-  if(pe)drawBars(pe,data.map(d=>d.date.slice(5)),data.map(d=>d.protein||0),'#3fcf6e',goals.proteinGoal);
-  const w7=data.slice(-7);
-  setText('an-ac',w7.length?Math.round(w7.reduce((s,e)=>s+(e.calories||0),0)/w7.length):'—');
-  setText('an-ap',w7.length?Math.round(w7.reduce((s,e)=>s+(e.protein||0),0)/w7.length):'—');
-}
-function renderTrainingAnalytics(){
+  const projEl=document.getElementById('an-proj');
+  if(projEl)projEl.textContent=a.weightTrend?.projectedGoalDate
+    ?`${a.weightTrend.label} · Goal by ${a.weightTrend.projectedGoalDate}`:
+    a.weightTrend?.label||'';
+
+  // ── Nutrition rings ──
+  const ringsEl=document.getElementById('an-rings');
+  if(ringsEl){
+    ringsEl.innerHTML='';
+    const R=36,C=2*Math.PI*R,SZ=88;
+    const nutRings=[
+      {lbl:'Calories',val:a.rolling3?.calories,max:goals.caloriesMax||1500,color:'#c9a84c',unit:'kcal'},
+      {lbl:'Protein', val:a.rolling3?.protein, max:goals.proteinGoal||120, color:'#3fcf6e',unit:'g'},
+    ];
+    nutRings.forEach(ring=>{
+      const pct=ring.val!=null?Math.min(ring.val/ring.max,1):0;
+      const offset=C-(pct*C);
+      const item=document.createElement('div');item.className='an-ring-item';
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.style.transform='rotate(-90deg)';svg.setAttribute('width',SZ);svg.setAttribute('height',SZ);svg.setAttribute('viewBox',`0 0 ${SZ} ${SZ}`);
+      svg.innerHTML=`<circle fill="none" stroke="rgba(255,255,255,.06)" stroke-width="5" cx="${SZ/2}" cy="${SZ/2}" r="${R}"/>
+        <circle fill="none" stroke="${ring.color}" stroke-width="5" stroke-linecap="round" cx="${SZ/2}" cy="${SZ/2}" r="${R}" stroke-dasharray="${C}" stroke-dashoffset="${offset}"/>`;
+      item.innerHTML=`<div style="position:relative;width:${SZ}px;height:${SZ}px">${svg.outerHTML}<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:20px;color:#fff;line-height:1">${ring.val!=null?ring.val:'—'}</div><div style="font-size:7.5px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-top:2px">${ring.unit}</div></div></div><div class="an-ring-lbl">${ring.lbl}</div><div class="an-ring-val">${ring.val!=null?Math.round(ring.val/ring.max*100)+'%':'—'}</div>`;
+      ringsEl.appendChild(item);
+    });
+  }
+
+  // ── Heatmap ──
   const hm=document.getElementById('heatmap');if(!hm)return;hm.innerHTML='';
   const today=new Date();today.setHours(0,0,0,0);
   const start=new Date(today);start.setDate(today.getDate()-today.getDay()-12*7);
-  for(let w=0;w<13;w++){const col=document.createElement('div');col.className='hm-col';for(let d=0;d<7;d++){const dt=new Date(start);dt.setDate(start.getDate()+w*7+d);const k=dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(dt.getDate());const e=dailyLog.find(e=>e.date===k);const c=document.createElement('div');c.className='hm-c'+(e?.trainingType?' h4':e?.calories?' h2':'');col.appendChild(c);}hm.appendChild(col);}
-  const ve=document.getElementById('c-vol');if(!ve)return;
-  const weeks=[];for(let i=7;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i*7);weeks.push({lbl:'W'+(8-i),n:workoutLog.filter(e=>{const ed=new Date(e.date+'T00:00:00');const diff=Math.round((d-ed)/86400000);return diff>=0&&diff<7;}).length});}
-  drawBars(ve,weeks.map(w=>w.lbl),weeks.map(w=>w.n),'#c9a84c');
-}
-function renderPRBoard(){
-  const el=document.getElementById('pr-list');if(!el)return;
-  const prs={};
-  workoutLog.forEach(e=>{if(!e.exercise||!e.weight||!e.reps)return;const vol=parseFloat(e.weight)*parseInt(e.reps);if(!prs[e.exercise]||vol>prs[e.exercise].vol)prs[e.exercise]={vol,weight:e.weight,reps:e.reps,date:e.date};});
-  const prog=serverAnalytics?.progression||{};
-  if(!Object.keys(prs).length){el.innerHTML='<div class="empty">Log workouts to see PRs</div>';return;}
-  el.innerHTML=Object.entries(prs).map(([id,pr])=>{
-    const ex=findEx(id);
-    const p=prog[id];
-    let badge='';
-    if(p){
-      if(p.improved)badge=`<span class="pr-badge improved">+${p.change}% ↑</span>`;
-      else if(p.same)badge=`<span class="pr-badge consistent">Consistent</span>`;
-      else if(p.regressed)badge=`<span class="pr-badge regressed">Showing up ✓</span>`;
-    }
-    return`<div class="pr-row"><div class="pr-ex">${ex?.nm||id}</div>${badge}<div class="pr-v">${pr.weight}<span style="font-size:12px;color:var(--t2)"> × ${pr.reps}</span></div></div>`;
-  }).join('');
+  for(let w=0;w<13;w++){const col=document.createElement('div');col.className='hm-col';for(let d2=0;d2<7;d2++){const dt=new Date(start);dt.setDate(start.getDate()+w*7+d2);const k=dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(dt.getDate());const e=dailyLog.find(e=>e.date===k);const c=document.createElement('div');c.className='hm-c'+(e?.trainingType?' h4':e?.calories?' h2':'');col.appendChild(c);}hm.appendChild(col);}
 }
 
 function drawLine(canvas,labels,values,color,goal){
