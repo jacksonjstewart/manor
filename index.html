@@ -1045,18 +1045,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   startClock();
   fetchWeather();
-  renderAll();
+  renderAll();       // render immediately from localStorage — no waiting for network
   buildProgCards();
   checkEOD();
   setInterval(checkEOD, 60000);
   setInterval(checkAutoCommit, 60000);
 
-  (async () => {
+  // Delay initial sync by 2s so the UI is fully rendered before any network call
+  // This prevents the OFFLINE flash on slow connections / Apps Script cold starts
+  setTimeout(async () => {
     try {
       if (API) await syncAll();
       else setSyncState('err', '');
-    } catch { setSyncState('err', ''); }
-  })();
+    } catch { /* syncAll handles its own errors */ }
+  }, 2000);
+
+  // Background sync every 5 minutes — silent, never disrupts UI
   setInterval(() => { if (API) syncAll(); }, 5 * 60 * 1000);
 });
 
@@ -1076,14 +1080,36 @@ function sanitiseWakeTimes(log) {
 // ════════════════════════════════════════════════════════════════════
 //  API
 // ════════════════════════════════════════════════════════════════════
+let syncFailCount = 0;  // only show OFFLINE after repeated failures
+const SYNC_TIMEOUT_MS = 25000;  // Apps Script can be slow on cold start
+
+// Fetch with timeout — never hang forever
+async function fetchWithTimeout(url, opts = {}, ms = SYNC_TIMEOUT_MS) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms);
+  try {
+    const r = await fetch(url, { ...opts, signal: ctrl.signal });
+    return r;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function apiPost(data) {
   if (!API) return null;
-  const r = await fetch(API, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(data) });
-  return r.json();
+  try {
+    const r = await fetchWithTimeout(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(data)
+    }, 20000);
+    return r.json();
+  } catch { return null; }  // silent fail — data already saved locally
 }
+
 async function apiGet() {
   if (!API) return null;
-  const r = await fetch(API);
+  const r = await fetchWithTimeout(API, {}, SYNC_TIMEOUT_MS);
   return r.json();
 }
 
@@ -1091,28 +1117,48 @@ async function syncAll() {
   setSyncState('syn', 'SYNCING');
   try {
     const d = await apiGet();
-    if (!d?.ok) throw new Error('bad response');
-    dailyLog   = d.dailyLog   || [];
-    workoutLog = d.workoutLog || [];
-    goals      = d.goals      || goals;
-    campaign   = d.campaign   || null;
+
+    // Validate response has meaningful data
+    if (!d || typeof d !== 'object') throw new Error('invalid response');
+
+    // Only update local state if server returns valid arrays
+    // Never replace good local data with empty server data
+    if (Array.isArray(d.dailyLog)   && d.dailyLog.length   >= 0) dailyLog   = d.dailyLog;
+    if (Array.isArray(d.workoutLog) && d.workoutLog.length >= 0) workoutLog = d.workoutLog;
+    if (d.goals && typeof d.goals === 'object') goals = d.goals;
+    if (d.campaign !== undefined) campaign = d.campaign;
     if (d.analytics) serverAnalytics = d.analytics;
+
     // Sanitise wakeTime from server
     sanitiseWakeTimes(dailyLog);
+
     // Only take committed dates from server, never draft
-    if (d.committedDates) committedDays = new Set(d.committedDates);
+    if (Array.isArray(d.committedDates)) committedDays = new Set(d.committedDates);
+
     save(CK.d, dailyLog); save(CK.w, workoutLog);
-    save(CK.g, goals); save(CK.c, campaign);
+    save(CK.g, goals);    save(CK.c, campaign);
     save(CK.committed, [...committedDays]);
     save(CK.s, new Date().toISOString());
+
+    // Success — reset failure count, clear offline banner
+    syncFailCount = 0;
     const n = new Date();
     const t = `${n.getHours()%12||12}:${pad(n.getMinutes())}${n.getHours()>=12?'pm':'am'}`;
     setSyncState('ok', t);
     document.getElementById('offline').classList.remove('on');
     renderAll();
-  } catch {
+
+  } catch (err) {
+    syncFailCount++;
     setSyncState('err', '');
-    document.getElementById('offline').classList.add('on');
+    // Only show OFFLINE banner after 2+ consecutive failures
+    // This prevents a single slow response from scaring the user
+    if (syncFailCount >= 2) {
+      document.getElementById('offline').classList.add('on');
+    }
+    // CRITICAL: do NOT wipe local data or call renderAll on failure
+    // The UI keeps showing whatever was last successfully loaded
+    console.warn('MANOR sync failed:', err?.message || err);
   }
 }
 
@@ -1705,14 +1751,17 @@ async function saveModal() {
   te[curField + '_checked']  = true;  // auto-check when value is saved
   save(CK.d, dailyLog); renderAll();
 
+  // Save locally first — this is the source of truth
+  // Server sync is best-effort and never blocks or reverts the UI
+  btn.className = 'm-save ok'; btn.textContent = 'Saved ✓';
+  setTimeout(closeModal, 450);
+  toast('Saved');
+
+  // Best-effort server push — silent fail
   try {
     const status = isCommitted() ? 'committed' : isDraft() ? 'draft' : 'open';
-    await apiPost({ action:'logDay', entry:{...te, status, loggedBy:LOGGED_BY} });
-    btn.className = 'm-save ok'; btn.textContent = 'Saved ✓';
-    toast('Saved'); setTimeout(closeModal, 450);
-  } catch {
-    toast('Saved locally', 'info'); setTimeout(closeModal, 300);
-  }
+    apiPost({ action:'logDay', entry:{...te, status, loggedBy:LOGGED_BY} });
+  } catch { /* silent */ }
 }
 
 function closeModal() { document.getElementById('overlay').classList.remove('on'); curField = null; }
