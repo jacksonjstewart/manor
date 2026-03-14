@@ -130,7 +130,12 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 .tile.done .tile-check{background:var(--green);border-color:var(--green);color:#000;
   box-shadow:0 0 16px rgba(62,207,110,.28)}
 .tile.warn .tile-check{background:var(--amber);border-color:var(--amber);color:#000}
+/* has-value class covers BOTH empty-chk and unchecked states.
+   When showing ✓ (empty-chk): amber fill.
+   When not showing ✓ (unchecked+value): amber ring only.
+   We use JS to differentiate via the data-state attribute */
 .tile.has-value .tile-check{border-color:var(--amber);color:transparent;background:transparent}
+.tile.has-value[data-state="empty-chk"] .tile-check{background:var(--amber);border-color:var(--amber);color:#000}
 
 .tile-text{flex:1;min-width:0}
 
@@ -1234,11 +1239,16 @@ async function markComplete() {
   if (isCommitted() || isDraft()) return;
   if (!allLogged()) {
     const te = todayEntry();
-    const missing = ACTIONS.filter(a => {
+    const issues = ACTIONS.filter(a => {
       const v = te[a.id]; const c = te[a.id+'_checked'];
       return !(v != null && v !== '' && c === true);
-    }).map(a => a.label);
-    toast(`Confirm all actions first: ${missing.join(', ')}`, 'err');
+    }).map(a => {
+      const v = te[a.id]; const c = te[a.id+'_checked'];
+      if (!v || v === '') return `${a.label} (no value)`;
+      if (!c) return `${a.label} (not confirmed)`;
+      return a.label;
+    });
+    toast(`Not ready: ${issues.join(' · ')}`, 'err');
     return;
   }
   draftDays.add(todayStr());
@@ -1345,10 +1355,17 @@ function renderTiles() {
     const checked = te[def.id + '_checked'] === true;
     const hasVal  = raw != null && raw !== '';
 
-    // State: empty | checked | unchecked | warn
-    let state = 'empty';
-    if (hasVal && checked) state = 'checked';
-    else if (hasVal)       state = 'unchecked';
+    // State machine:
+    // empty-unc  = no value, unchecked  → red (crimson)
+    // empty-chk  = no value, checked    → amber (checked but nothing logged yet)
+    // unchecked  = has value, unchecked → amber (logged but not confirmed)
+    // checked    = has value + checked  → green
+    // warn       = checked + off-goal   → amber override
+    let state = 'empty-unc';
+    if      (!hasVal &&  checked) state = 'empty-chk';
+    else if ( hasVal && !checked) state = 'unchecked';
+    else if ( hasVal &&  checked) state = 'checked';
+
     if (state === 'checked') {
       if (def.id === 'wakeTime'  && t2m(raw) > t2m(goals.wakeGoal)) state = 'warn';
       if (def.id === 'calories'  && raw > goals.caloriesMax)          state = 'warn';
@@ -1356,7 +1373,11 @@ function renderTiles() {
     }
 
     const tileClass = ({
-      empty:'tile', checked:'tile done', unchecked:'tile has-value', warn:'tile warn'
+      'empty-unc': 'tile',
+      'empty-chk': 'tile has-value',
+      'unchecked': 'tile has-value',
+      'checked':   'tile done',
+      'warn':      'tile warn',
     })[state] + (locked ? ' locked' : '');
 
     let displayVal = '';
@@ -1368,10 +1389,12 @@ function renderTiles() {
       else                             displayVal = String(raw);
     }
 
+    // Stamp text
     const loggedAt = te[def.id + '_loggedAt'] || '';
-    const stampTxt = state === 'unchecked'
-      ? `Logged ${loggedAt||'today'} — not yet confirmed`
-      : hasVal ? `${loggedAt||'Today'} — ${LOGGED_BY}` : '';
+    let stampTxt = '';
+    if (state === 'empty-chk') stampTxt = 'Checked — add a value via Edit';
+    else if (state === 'unchecked') stampTxt = `Logged ${loggedAt||'today'} — tap to confirm`;
+    else if (hasVal) stampTxt = `${loggedAt||'Today'} — ${LOGGED_BY}`;
 
     let delta = '', deltaCls = '';
     if (hasVal) {
@@ -1399,6 +1422,7 @@ function renderTiles() {
 
     const tile = document.createElement('div');
     tile.className = tileClass;
+    tile.dataset.state = state;  // for CSS targeting
 
     const subClass = hasVal ? 'tile-sub has-val' : 'tile-sub ph';
     const subText  = hasVal ? displayVal : def.sub;
@@ -1409,7 +1433,7 @@ function renderTiles() {
 
     tile.innerHTML = `
       <div class="tile-body">
-        <div class="tile-check">${(state==='checked'||state==='warn')?'✓':''}</div>
+        <div class="tile-check">${(state==='checked'||state==='warn'||state==='empty-chk')?'✓':''}</div>
         <div class="tile-text">
           <div class="tile-label">${def.label}</div>
           <div class="tile-main-row">
@@ -1425,14 +1449,14 @@ function renderTiles() {
     `;
 
     if (!locked) {
-      // EDIT
+      // EDIT — only way to add/change a value
       tile.querySelector('[data-action="edit"]')?.addEventListener('click', e => {
         e.stopPropagation();
         if (def.id === 'trainingType') toggleCascade(tile);
         else openModal(def.id, te);
       });
 
-      // CLEAR
+      // CLEAR — wipes value, resets to red unchecked
       tile.querySelector('[data-action="clear"]')?.addEventListener('click', e => {
         e.stopPropagation();
         if (def.id === 'trainingType') {
@@ -1456,14 +1480,32 @@ function renderTiles() {
       // CASCADE click isolation
       tile.querySelector('.cascade')?.addEventListener('click', e => e.stopPropagation());
 
-      // TILE BODY → toggle check only
+      // TILE BODY → toggle check ONLY. Never opens a modal. Never.
       tile.addEventListener('click', e => {
         if (e.target.closest('[data-action]')) return;
         if (e.target.closest('.cascade')) return;
-        if (def.id === 'trainingType') { toggleCascade(tile); return; }
-        if (state === 'empty')                      openModal(def.id, te);
-        else if (state==='checked'||state==='warn') toggleCheck(def.id, false);
-        else if (state==='unchecked')               toggleCheck(def.id, true);
+
+        if (def.id === 'trainingType') {
+          // Training body tap = toggle cascade open/close (not a check toggle)
+          toggleCascade(tile);
+          return;
+        }
+
+        // All other tiles: body tap = toggle check state only
+        // empty-unc  → check → empty-chk (amber, no value)
+        // empty-chk  → uncheck → empty-unc (red)
+        // unchecked  → check → checked (green, if value present)
+        // checked    → uncheck → unchecked (amber, value preserved)
+        // warn       → uncheck → unchecked (amber, value preserved)
+        if (state === 'empty-unc') {
+          toggleCheck(def.id, true);   // red → amber (checked, no value yet)
+        } else if (state === 'empty-chk') {
+          toggleCheck(def.id, false);  // amber → red (unchecked, no value)
+        } else if (state === 'unchecked') {
+          toggleCheck(def.id, true);   // amber → green
+        } else if (state === 'checked' || state === 'warn') {
+          toggleCheck(def.id, false);  // green → amber (value preserved)
+        }
       });
     }
 
@@ -1701,7 +1743,9 @@ function toggleCheck(fieldId, checked) {
 }
 async function clearEntry(fieldId) {
   const te = dailyLog.find(e => e.date === todayStr()); if (!te) return;
-  delete te[fieldId]; delete te[fieldId + '_loggedAt'];
+  delete te[fieldId];
+  delete te[fieldId + '_loggedAt'];
+  delete te[fieldId + '_checked'];  // must clear check too → tile returns to red
   save(CK.d, dailyLog); renderAll();
   const labels = { wakeTime:'Wake time', weight:'Weight', calories:'Calories', protein:'Protein', trainingType:'Training' };
   toast(`${labels[fieldId]||fieldId} cleared`, 'info');
@@ -1846,14 +1890,31 @@ function getAnalytics() {
 
 function computeAnalytics() {
   const today = todayStr();
-  const sorted = [...dailyLog].filter(e => e.date <= today).sort((a,b) => b.date.localeCompare(a.date));
+
+  // For today: only use values that are checked (green) — unchecked = amber, not confirmed
+  // For past days: all values count (they've been committed at midnight)
+  const effectiveLog = dailyLog.map(e => {
+    if (e.date !== today) return e;  // past days: use as-is
+    // Today: mask out any field that isn't checked
+    const masked = { date: e.date };
+    ['calories','protein','weight','wakeTime','trainingType'].forEach(field => {
+      if (e[field] != null && e[field] !== '' && e[field + '_checked'] === true) {
+        masked[field] = e[field];
+        masked[field + '_checked'] = true;
+        if (e[field + '_loggedAt']) masked[field + '_loggedAt'] = e[field + '_loggedAt'];
+      }
+    });
+    return masked;
+  });
+
+  const sorted = [...effectiveLog].filter(e => e.date <= today).sort((a,b) => b.date.localeCompare(a.date));
   const last3  = sorted.slice(0, 3);
   const avg3   = field => { const v = last3.map(e=>e[field]).filter(v=>v!=null&&v!==''); return v.length ? v.reduce((s,x)=>s+Number(x),0)/v.length : null; };
   const avgCal = avg3('calories'), avgPro = avg3('protein');
 
   const d7ago = new Date(); d7ago.setDate(d7ago.getDate()-6);
   const d7k   = `${d7ago.getFullYear()}-${pad(d7ago.getMonth()+1)}-${pad(d7ago.getDate())}`;
-  const sessions7 = dailyLog.filter(e => e.trainingType && e.date >= d7k && e.date <= today).length;
+  const sessions7 = effectiveLog.filter(e => e.trainingType && e.date >= d7k && e.date <= today).length;
   const l3train   = last3.filter(e => e.trainingType).length;
 
   // Calorie phase
@@ -1878,7 +1939,7 @@ function computeAnalytics() {
     else              { trainLabel = 'Exceeding';         trainStatus = 'gold'; }
   }
 
-  // Weight trend
+  // Weight trend — use effective weight (checked only for today)
   const wtData = sorted.filter(e => e.weight).slice(0, 14);
   let wtTrend = null, wtLabel = 'Waiting', wtStatus = 'gray', projDate = null, curWt = null;
   if (wtData.length) curWt = wtData[0].weight;
@@ -1972,8 +2033,17 @@ function renderSparkline() {
   const sv = document.getElementById('spark-val'); if (sv) sv.textContent = wt.current ? parseFloat(wt.current).toFixed(1)+' lbs' : '—';
   const sp = document.getElementById('spark-proj'); if (sp) sp.textContent = wt.projectedDate ? `Goal (${goals.weightGoal}lbs) → ${wt.projectedDate}` : '';
 
+  const today = todayStr();
   const cut = new Date(); cut.setDate(cut.getDate()-13);
-  const data = [...dailyLog].filter(e=>e.weight&&new Date(e.date+'T00:00:00')>=cut).sort((a,b)=>a.date.localeCompare(b.date));
+
+  // Only include today's weight if it's checked (green)
+  const data = [...dailyLog].filter(e => {
+    if (!e.weight) return false;
+    if (new Date(e.date+'T00:00:00') < cut) return false;
+    if (e.date === today) return e.weight_checked === true;
+    return true;
+  }).sort((a,b) => a.date.localeCompare(b.date));
+
   const ctx = canvas.getContext('2d');
   const W = canvas.parentElement?.clientWidth - 28 || 220; const H = 42;
   canvas.width = W; canvas.height = H;
@@ -2006,19 +2076,38 @@ function renderSparkline() {
 //  ANALYTICS VIEW
 // ════════════════════════════════════════════════════════════════════
 function renderAnalytics() {
-  // Weight
+  const today = todayStr();
+
+  // Build effective log — today's entries only count if checked (green)
+  const effectiveLog = dailyLog.map(e => {
+    if (e.date !== today) return e;
+    const m = { date: e.date };
+    ['calories','protein','weight','wakeTime','trainingType'].forEach(f => {
+      if (e[f] != null && e[f] !== '' && e[f+'_checked'] === true) m[f] = e[f];
+    });
+    return m;
+  });
+
+  // Weight chart
   const cut = new Date(); cut.setDate(cut.getDate()-30);
-  const wdata = [...dailyLog].filter(e=>e.weight&&new Date(e.date+'T00:00:00')>=cut).sort((a,b)=>a.date.localeCompare(b.date));
+  const wdata = effectiveLog.filter(e=>e.weight&&new Date(e.date+'T00:00:00')>=cut).sort((a,b)=>a.date.localeCompare(b.date));
   const curWt = wdata.length ? parseFloat(wdata.at(-1).weight) : null;
-  const anCur = document.getElementById('an-cur'); if (anCur) anCur.innerHTML = curWt!=null?`${curWt.toFixed(1)}<span class="an-unit">lbs</span>`:`—<span class="an-unit">lbs</span>`;
+  const anCur = document.getElementById('an-cur');
+  if (anCur) anCur.innerHTML = curWt!=null?`${curWt.toFixed(1)}<span class="an-unit">lbs</span>`:`—<span class="an-unit">lbs</span>`;
   const anGoal = document.getElementById('an-goal'); if (anGoal) anGoal.textContent = goals.weightGoal||'—';
   const anChg = document.getElementById('an-chg');
-  if (anChg && wdata.length>1) { const chg=(wdata.at(-1).weight-wdata[0].weight).toFixed(1); anChg.textContent=(+chg>0?'+':'')+chg+' lbs'; anChg.className='an-delta '+(+chg<0?'dn':'up'); } else if(anChg){anChg.textContent='';anChg.className='an-delta';}
-  const wCanvas = document.getElementById('c-wt'); if (wCanvas&&wdata.length>=2) drawLine(wCanvas, wdata.map(d=>d.date.slice(5)), wdata.map(d=>d.weight), '#3ecf6e', goals.weightGoal);
+  if (anChg && wdata.length>1) {
+    const chg=(wdata.at(-1).weight-wdata[0].weight).toFixed(1);
+    anChg.textContent=(+chg>0?'+':'')+chg+' lbs';
+    anChg.className='an-delta '+(+chg<0?'dn':'up');
+  } else if(anChg){anChg.textContent='';anChg.className='an-delta';}
+  const wCanvas = document.getElementById('c-wt');
+  if (wCanvas&&wdata.length>=2) drawLine(wCanvas, wdata.map(d=>d.date.slice(5)), wdata.map(d=>d.weight), '#3ecf6e', goals.weightGoal);
   const a = getAnalytics();
-  const anProj = document.getElementById('an-proj'); if (anProj) anProj.textContent = a.weightTrend.projectedDate?`${a.weightTrend.label} · Goal by ${a.weightTrend.projectedDate}`:a.weightTrend.label||'';
+  const anProj = document.getElementById('an-proj');
+  if (anProj) anProj.textContent = a.weightTrend.projectedDate?`${a.weightTrend.label} · Goal by ${a.weightTrend.projectedDate}`:a.weightTrend.label||'';
 
-  // Nutrition rings
+  // Nutrition rings (from analytics which already uses effectiveLog internally)
   const ringsEl = document.getElementById('an-rings'); if (ringsEl) {
     ringsEl.innerHTML = '';
     const R=38, C=2*Math.PI*R, SZ=92;
@@ -2044,11 +2133,22 @@ function renderAnalytics() {
     });
   }
 
-  // Heatmap
+  // Heatmap — today only lights up if training is checked
   const hm = document.getElementById('heatmap'); if (!hm) return; hm.innerHTML='';
-  const today=new Date(); today.setHours(0,0,0,0);
-  const start=new Date(today); start.setDate(today.getDate()-today.getDay()-12*7);
-  for(let w=0;w<13;w++){const col=document.createElement('div');col.className='hm-col';for(let d=0;d<7;d++){const dt=new Date(start);dt.setDate(start.getDate()+w*7+d);const k=`${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}`;const e=dailyLog.find(e=>e.date===k);const c=document.createElement('div');c.className='hm-c'+(e?.trainingType?' t':e?.calories?' d':'');col.appendChild(c);}hm.appendChild(col);}
+  const todayDt=new Date(); todayDt.setHours(0,0,0,0);
+  const start=new Date(todayDt); start.setDate(todayDt.getDate()-todayDt.getDay()-12*7);
+  for(let w=0;w<13;w++){
+    const col=document.createElement('div');col.className='hm-col';
+    for(let d=0;d<7;d++){
+      const dt=new Date(start);dt.setDate(start.getDate()+w*7+d);
+      const k=`${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}`;
+      const e=effectiveLog.find(e=>e.date===k);
+      const c=document.createElement('div');
+      c.className='hm-c'+(e?.trainingType?' t':e?.calories?' d':'');
+      col.appendChild(c);
+    }
+    hm.appendChild(col);
+  }
 }
 
 function drawLine(canvas, labels, values, color, goal) {
