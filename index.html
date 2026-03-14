@@ -75,21 +75,89 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 .side::-webkit-scrollbar{display:none}
 
 /* ── TODAY HEADER ──────────────────────────────────────── */
-.today-hdr{padding:28px 24px 0}
-.today-dow{
-  font-family:'Cormorant Garamond',serif;font-weight:300;
-  font-size:76px;color:#fff;line-height:.88;letter-spacing:-4px;
-  margin-bottom:12px;
+/* ── TOP BAR ──────────────────────────────────────────── */
+.top-bar{
+  display:flex;align-items:center;
+  padding:22px 22px 0;
+  position:relative;
 }
-.today-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px}
-.today-date{font-size:17px;font-weight:300;color:var(--t1);letter-spacing:.2px}
-.today-time{font-size:13px;color:var(--t3);margin-top:4px;letter-spacing:.5px;font-variant-numeric:tabular-nums}
-.today-weather{display:none;align-items:center;gap:7px}
-.today-weather.on{display:flex}
-.tw-icon{font-size:18px;opacity:.65}
-.tw-temp{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--t1)}
-.tw-desc{font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-top:1px}
-.today-rule{height:1px;background:linear-gradient(90deg,var(--gb),transparent);margin-top:14px;margin-bottom:20px}
+
+/* Avatar — premium dark circle with gold gradient ring */
+.profile-avatar{
+  width:46px;height:46px;border-radius:50%;flex-shrink:0;
+  background:radial-gradient(ellipse at 35% 35%,var(--s4),var(--s2));
+  border:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:center;
+  cursor:default;position:relative;
+  box-shadow:0 2px 12px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);
+}
+.profile-initials{
+  font-family:'Cormorant Garamond',serif;font-weight:400;
+  font-size:16px;color:rgba(255,255,255,.75);line-height:1;letter-spacing:.5px;
+  text-shadow:0 1px 4px rgba(0,0,0,.4);
+}
+/* thin gold arc around avatar */
+.profile-avatar::after{
+  content:'';position:absolute;inset:-2px;border-radius:50%;
+  background:conic-gradient(var(--gold) 0deg, var(--gold2) 90deg, transparent 180deg, transparent 360deg);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#fff calc(100% - 1.5px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#fff calc(100% - 1.5px));
+  opacity:.55;
+}
+
+/* Profile info */
+.profile-info{margin-left:12px;flex:1;min-width:0}
+.profile-name{
+  font-size:14px;font-weight:600;color:var(--t0);
+  letter-spacing:-.1px;line-height:1;
+}
+.profile-sub{display:flex;align-items:center;gap:7px;margin-top:5px}
+.profile-age{
+  font-size:8px;font-weight:700;letter-spacing:2.5px;
+  color:var(--t3);text-transform:uppercase;
+  background:var(--s3);border:1px solid var(--b0);
+  padding:2px 7px;border-radius:99px;
+}
+.profile-weight{
+  font-family:'Cormorant Garamond',serif;font-size:14px;
+  font-weight:300;color:var(--t2);letter-spacing:-.3px;
+}
+.profile-weight-dot{
+  width:3px;height:3px;border-radius:50%;
+  background:var(--t4);flex-shrink:0;
+}
+
+/* Centre: MANOR — slightly larger, more presence */
+.top-bar-logo{
+  position:absolute;left:50%;transform:translateX(-50%);
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:24px;letter-spacing:10px;
+  color:rgba(255,255,255,.65);
+  text-transform:uppercase;user-select:none;pointer-events:none;
+  text-indent:10px;/* compensate letter-spacing on right */
+  white-space:nowrap;
+}
+
+/* Right: time + compact weather */
+.top-bar-right{
+  display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;
+}
+.top-time{
+  font-size:12px;color:var(--t3);letter-spacing:.5px;
+  font-variant-numeric:tabular-nums;
+}
+.top-weather{display:none;align-items:center;gap:4px;justify-content:flex-end}
+.top-weather.on{display:flex}
+.tw-icon{font-size:13px;opacity:.5;line-height:1}
+.tw-temp{font-size:11px;font-weight:300;color:var(--t3);font-variant-numeric:tabular-nums}
+.tw-desc{display:none}
+
+/* Divider beneath top bar */
+.top-rule{
+  height:1px;
+  background:linear-gradient(90deg,transparent 5%,var(--b1) 30%,var(--b1) 70%,transparent 95%);
+  margin:16px 0 16px;
+}
 
 /* ── SECTION LABEL ─────────────────────────────────────── */
 .lbl{font-size:8px;font-weight:700;letter-spacing:3.5px;color:var(--t3);
@@ -112,7 +180,6 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 }
 .tile:active{transform:scale(.987)}
 .tile.done{background:var(--gn);border-color:var(--gnb)}
-.tile.warn{background:rgba(240,160,48,.07);border-color:rgba(240,160,48,.3)}
 /* Has a value but user unchecked it — amber/gold to signal "logged but not confirmed" */
 .tile.has-value{background:rgba(240,160,48,.06);border-color:rgba(240,160,48,.26)}
 .tile.training-open{background:rgba(240,160,48,.06);border-color:rgba(240,160,48,.22)}
@@ -129,7 +196,6 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 }
 .tile.done .tile-check{background:var(--green);border-color:var(--green);color:#000;
   box-shadow:0 0 16px rgba(62,207,110,.28)}
-.tile.warn .tile-check{background:var(--amber);border-color:var(--amber);color:#000}
 /* has-value class covers BOTH empty-chk and unchecked states.
    When showing ✓ (empty-chk): amber fill.
    When not showing ✓ (unchecked+value): amber ring only.
@@ -146,7 +212,6 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
   transition:color .18s;
 }
 .tile.done .tile-label{color:rgba(62,207,110,.7)}
-.tile.warn .tile-label{color:rgba(240,160,48,.75)}
 .tile.has-value .tile-label{color:rgba(240,160,48,.65)}
 
 /* MAIN TEXT row — sub text + EDIT + CLEAR inline */
@@ -161,7 +226,6 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .tile-sub.has-val{color:#fff;font-size:34px}
-.tile.warn .tile-sub{color:var(--amber)}
 .tile.has-value .tile-sub{color:rgba(240,160,48,.9)}
 
 /* Default placeholder text — lighter grey */
@@ -343,72 +407,87 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 #offline.on{display:block}
 
 /* ── RIGHT PANEL ───────────────────────────────────────── */
-.side-scroll{flex:1;overflow-y:auto;padding:20px 18px 32px;scrollbar-width:none}
+.side-scroll{flex:1;overflow-y:auto;padding:24px 20px 40px;scrollbar-width:none}
 .side-scroll::-webkit-scrollbar{display:none}
 
 /* watermark + sync */
-.side-mark{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.side-manor{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:26px;
-  color:rgba(255,255,255,.05);letter-spacing:6px;user-select:none}
-.side-sync{display:flex;align-items:center;gap:6px}
+.side-mark{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}
+.side-manor{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:22px;
+  color:rgba(255,255,255,.04);letter-spacing:6px;user-select:none}
+.side-sync{display:flex;align-items:center;gap:5px}
 .sync-dot{width:5px;height:5px;border-radius:50%;background:var(--t4);flex-shrink:0;transition:background .3s}
 .sync-dot.ok{background:var(--green)}.sync-dot.syn{background:var(--amber);animation:pulse 1s infinite}.sync-dot.err{background:var(--red)}
-.sync-lbl{font-size:7.5px;font-weight:700;letter-spacing:2px;color:var(--t3);text-transform:uppercase}
+.sync-lbl{font-size:7px;font-weight:700;letter-spacing:2px;color:var(--t3);text-transform:uppercase}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
 
-/* streak */
-.side-streak{
-  background:var(--gd);border:1px solid var(--gb);border-radius:12px;
-  padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;
-}
-.streak-n{font-family:'Cormorant Garamond',serif;font-size:64px;font-weight:300;
-  color:var(--gold);line-height:1;letter-spacing:-4px}
-.streak-lbl{font-size:8px;font-weight:700;letter-spacing:2px;color:rgba(201,168,76,.4);text-transform:uppercase}
-.streak-sub{font-size:11px;color:var(--t2);margin-top:3px}
-
-/* ── ARC GAUGES (WHOOP-style) ──────────────────────────── */
-.arcs-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.arc-card{
-  background:var(--s2);border:1px solid var(--b0);border-radius:11px;
-  padding:12px 8px 10px;display:flex;flex-direction:column;align-items:center;
-}
-.arc-svg-wrap{position:relative;width:80px;height:50px;margin:0 auto 6px}
-.arc-svg-wrap svg{position:absolute;top:0;left:0}
-.arc-center{
-  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+/* ── COMPLETION RING ─────────────────────────────────────────────── */
+.ring-wrap{
   display:flex;flex-direction:column;align-items:center;
-  pointer-events:none;padding-bottom:2px;
+  margin-bottom:26px;
 }
-.arc-val{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;color:#fff;line-height:1}
-.arc-unit{font-size:6.5px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-top:1px}
-.arc-lbl{font-size:7px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;text-align:center}
-.arc-phase{font-size:7px;font-weight:700;text-align:center;margin-top:2px;letter-spacing:.5px}
+.ring-outer{position:relative;width:172px;height:172px;margin:0 auto}
+.ring-svg{position:absolute;top:0;left:0;width:172px;height:172px;overflow:visible}
+.ring-center{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;pointer-events:none;
+}
+.ring-count{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:64px;color:#fff;line-height:1;letter-spacing:-4px;
+  transition:color .3s;
+}
+.ring-count.all{color:var(--green)}
+.ring-denom{font-size:9px;color:var(--t3);letter-spacing:3px;text-transform:uppercase;margin-top:4px}
+.ring-label{
+  font-size:7px;font-weight:700;letter-spacing:3.5px;color:var(--t3);
+  text-transform:uppercase;margin-top:14px;transition:color .3s;
+}
+.ring-label.all{color:var(--green)}
 
-/* phase chips */
-.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
-.chip{font-size:7.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
-  padding:4px 10px;border-radius:99px;border:1px solid var(--b0);color:var(--t3);
-  background:var(--s2);white-space:nowrap}
-.chip.g{color:var(--green);background:rgba(62,207,110,.07);border-color:rgba(62,207,110,.18)}
-.chip.a{color:var(--amber);background:rgba(240,160,48,.07);border-color:rgba(240,160,48,.18)}
-.chip.r{color:var(--red);background:rgba(224,85,85,.07);border-color:rgba(224,85,85,.18)}
-.chip.gold{color:var(--gold);background:var(--gd);border-color:var(--gb)}
-.chip.b{color:var(--blue);background:rgba(90,156,245,.07);border-color:rgba(90,156,245,.18)}
+/* ── STREAK ──────────────────────────────────────────────────────── */
+.streak-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:18px;padding:16px 0 0;
+  border-top:1px solid var(--b0);
+}
+.streak-num{
+  font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;
+  color:var(--gold);line-height:1;letter-spacing:-2px;
+}
+.streak-lbl{font-size:7.5px;font-weight:700;letter-spacing:2.5px;color:rgba(201,168,76,.45);text-transform:uppercase}
+.streak-sub{font-size:10px;color:var(--t2);margin-top:3px}
 
-/* ── WEIGHT SPARKLINE ──────────────────────────────────── */
-.spark-card{background:var(--s2);border:1px solid var(--b0);border-radius:11px;padding:13px 14px;margin-bottom:14px}
-.spark-hdr{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:9px}
-.spark-title{font-size:8px;font-weight:700;letter-spacing:2.5px;color:var(--t3);text-transform:uppercase}
-.spark-val{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:#fff;letter-spacing:-.5px}
-#spark-canvas{width:100%;display:block}
-.spark-proj{font-size:8.5px;color:var(--gold);margin-top:6px;letter-spacing:.2px}
+/* ── STATUS INDICATORS ───────────────────────────────────────────── */
+.status-list{display:flex;flex-direction:column;gap:1px;margin-bottom:22px}
+.si{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 14px;border-radius:9px;
+  background:var(--s2);border:1px solid var(--b0);
+  transition:border-color .2s;
+}
+.si:first-child{border-radius:9px 9px 4px 4px}
+.si:last-child{border-radius:4px 4px 9px 9px}
+.si-dot{
+  width:7px;height:7px;border-radius:50%;flex-shrink:0;
+  transition:background .3s,box-shadow .3s;
+}
+.si-dot.g{background:var(--green);box-shadow:0 0 8px rgba(62,207,110,.45)}
+.si-dot.a{background:var(--amber);box-shadow:0 0 8px rgba(240,160,48,.35)}
+.si-dot.r{background:var(--red);box-shadow:0 0 8px rgba(224,85,85,.35)}
+.si-dot.n{background:var(--t4)}
+.si-body{flex:1;min-width:0}
+.si-label{font-size:7px;font-weight:700;letter-spacing:2.5px;color:var(--t3);text-transform:uppercase;margin-bottom:3px}
+.si-value{
+  font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;
+  color:var(--t0);line-height:1;letter-spacing:-.5px;
+}
+.si-sub{font-size:8px;color:var(--t3);margin-top:3px;letter-spacing:.2px}
 
-/* quote */
-.side-quote{background:var(--s2);border:1px solid var(--b0);
-  border-left:2px solid var(--gb);border-radius:0 11px 11px 0;
-  padding:12px 14px;margin-bottom:14px}
-.quote-text{font-family:'Cormorant Garamond',serif;font-size:13.5px;font-style:italic;
-  color:var(--t2);line-height:1.72}
+/* ── QUOTE ───────────────────────────────────────────────────────── */
+.side-quote{border-left:1px solid var(--gb);padding:0 0 0 12px}
+.quote-text{font-family:'Cormorant Garamond',serif;font-size:12.5px;font-style:italic;
+  color:var(--t3);line-height:1.75}
+
 
 /* ── OTHER VIEWS ───────────────────────────────────────── */
 .view-scroll{flex:1;overflow-y:auto;padding:0 22px 32px;min-height:0;
@@ -507,35 +586,41 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 /* ── BOTTOM NAV ────────────────────────────────────────── */
 #nav{
   position:fixed;bottom:0;left:0;right:0;
-  height:calc(var(--nav)+var(--safe));padding-bottom:var(--safe);
-  background:rgba(6,6,6,.97);
-  backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
-  border-top:1px solid var(--b1);
+  height:calc(var(--nav)+var(--safe));
+  padding-bottom:var(--safe);
+  background:rgba(6,6,6,.96);
+  backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
+  border-top:1px solid rgba(255,255,255,.07);
   display:flex;align-items:stretch;z-index:300;
+  /* 3 items only — clean, wide targets */
 }
-.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:5px;cursor:pointer;user-select:none;transition:opacity .15s;padding:0 4px;position:relative}
-.ni:active{opacity:.5}
-.ni::after{content:'';position:absolute;bottom:7px;left:50%;transform:translateX(-50%);
-  width:0;height:2px;background:var(--gold);border-radius:99px;transition:width .2s cubic-bezier(.4,0,.2,1)}
-.ni.on::after{width:18px}
-.ni-ico{font-size:18px;transition:transform .18s}
-.ni-lbl{font-size:7.5px;font-weight:700;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;transition:color .16s}
+.ni{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;cursor:pointer;user-select:none;
+  padding:0 8px;position:relative;
+  transition:opacity .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.ni:active{opacity:.4}
+/* active indicator — thin gold line at bottom */
+.ni::before{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:0;height:2px;background:var(--gold);border-radius:99px 99px 0 0;
+  transition:width .22s cubic-bezier(.4,0,.2,1);
+}
+.ni.on::before{width:28px}
+.ni-ico{
+  font-size:20px;line-height:1;
+  color:var(--t3);transition:color .18s,transform .18s;
+}
+.ni.on .ni-ico{color:var(--gold);transform:translateY(-1px)}
+.ni-lbl{
+  font-size:7px;font-weight:700;letter-spacing:2px;
+  color:var(--t3);text-transform:uppercase;
+  transition:color .18s;
+}
 .ni.on .ni-lbl{color:var(--gold)}
-.ni.on .ni-ico{transform:translateY(-2px)}
 
-/* ── MORE MENU ─────────────────────────────────────────── */
-#more-menu{position:fixed;bottom:calc(var(--nav)+var(--safe)+7px);right:10px;
-  background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:5px;
-  z-index:400;display:none;min-width:150px;box-shadow:0 12px 40px rgba(0,0,0,.85);
-  animation:menuUp .16s cubic-bezier(.4,0,.2,1)}
-#more-menu.on{display:block}
-@keyframes menuUp{from{opacity:0;transform:translateY(7px) scale(.97)}to{opacity:1;transform:none}}
-.mi{display:flex;align-items:center;gap:9px;padding:11px 14px;border-radius:8px;
-  cursor:pointer;transition:background .12s;user-select:none}
-.mi:hover{background:var(--s3)}
-.mi-ico{font-size:13px}
-.mi-lbl{font-size:8.5px;font-weight:700;letter-spacing:1.5px;color:var(--t2);text-transform:uppercase}
 
 /* ── OVERLAY MODAL ─────────────────────────────────────── */
 #overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:500;
@@ -626,8 +711,106 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 @media(max-width:640px){
   .side{display:none}
   .main{flex:1}
-  .today-dow{font-size:58px}
 }
+/* Settings button in right panel */
+.side-settings-btn{
+  display:flex;align-items:center;gap:8px;width:100%;
+  margin-top:20px;padding:10px 14px;
+  background:none;border:1px solid var(--b0);border-radius:9px;
+  color:var(--t3);font-family:'Outfit',sans-serif;
+  font-size:8px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  cursor:pointer;transition:all .15s;
+}
+.side-settings-btn:hover{border-color:var(--b1);color:var(--t2);background:var(--s2)}
+.task-filters{display:flex;gap:6px;margin-bottom:16px}
+.tf-btn{
+  font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:6px 14px;border-radius:99px;border:1px solid var(--b1);
+  background:none;color:var(--t3);cursor:pointer;transition:all .15s;
+}
+.tf-btn.on{background:var(--s3);border-color:var(--b2);color:var(--t1)}
+.tf-btn:hover{border-color:var(--b2);color:var(--t2)}
+
+.task-item{
+  border-radius:10px;background:var(--s2);border:1px solid var(--b0);
+  margin-bottom:6px;overflow:hidden;transition:border-color .2s;
+}
+.task-item.done-item{opacity:.55}
+.task-item.done-item .task-title{text-decoration:line-through;color:var(--t3)}
+
+.task-row{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 14px;cursor:pointer;user-select:none;
+  transition:background .12s;
+}
+.task-row:hover{background:rgba(255,255,255,.02)}
+
+.task-check{
+  width:20px;height:20px;border-radius:5px;flex-shrink:0;
+  border:1.5px solid var(--b2);background:none;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:transparent;font-weight:700;
+  transition:all .2s cubic-bezier(.4,0,.2,1);
+}
+.task-item.done-item .task-check{
+  background:var(--green);border-color:var(--green);color:#000;
+  box-shadow:0 0 10px rgba(62,207,110,.2);
+}
+
+.task-main{flex:1;min-width:0}
+.task-title{
+  font-size:13.5px;color:var(--t0);line-height:1.3;
+  transition:color .15s;
+}
+.task-meta{font-size:8px;color:var(--t3);letter-spacing:1px;margin-top:3px}
+
+.task-chev{
+  font-size:13px;color:var(--t4);flex-shrink:0;
+  transition:transform .2s cubic-bezier(.4,0,.2,1);
+}
+.task-item.open .task-chev{transform:rotate(90deg);color:var(--t2)}
+
+/* expanded dropdown section */
+.task-body{
+  display:none;border-top:1px solid var(--b0);
+  padding:12px 14px 14px;
+}
+.task-item.open .task-body{display:block}
+
+.task-notes{
+  font-size:12.5px;color:var(--t2);line-height:1.7;
+  margin-bottom:10px;font-style:italic;
+}
+.task-notes:empty{display:none}
+
+.task-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--b0);padding-top:8px;margin-top:4px;
+}
+.task-footer-left{font-size:8px;color:var(--t3);letter-spacing:.5px}
+
+/* health indicator tag — bottom right of dropdown */
+.task-hi-tag{
+  display:flex;align-items:center;gap:6px;
+  font-size:7.5px;font-weight:700;letter-spacing:1.5px;
+  color:var(--t4);text-transform:uppercase;
+}
+.task-hi-dot{
+  width:5px;height:5px;border-radius:50%;background:var(--t4);flex-shrink:0;
+}
+.task-hi-tag.wake    .task-hi-dot{background:#5a9cf5}  .task-hi-tag.wake   {color:#5a9cf5}
+.task-hi-tag.weight  .task-hi-dot{background:#2dd4bf}  .task-hi-tag.weight {color:#2dd4bf}
+.task-hi-tag.training .task-hi-dot{background:#a87fd4} .task-hi-tag.training{color:#a87fd4}
+.task-hi-tag.calories .task-hi-dot{background:#c9a84c} .task-hi-tag.calories{color:#c9a84c}
+.task-hi-tag.protein  .task-hi-dot{background:#3ecf6e} .task-hi-tag.protein {color:#3ecf6e}
+
+.task-empty{
+  display:flex;flex-direction:column;align-items:center;
+  padding:48px 24px;text-align:center;
+}
+.task-empty-ico{font-size:32px;color:var(--t4);margin-bottom:12px}
+.task-empty-txt{font-size:13px;color:var(--t2);margin-bottom:6px}
+.task-empty-sub{font-size:10px;color:var(--t3)}
 </style>
 </head>
 <body>
@@ -651,42 +834,49 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
   <div class="modal" id="modal-box"></div>
 </div>
 
-<div id="more-menu">
-  <div class="mi" onclick="go('campaign');closeMM()"><div class="mi-ico">⬟</div><div class="mi-lbl">Campaign</div></div>
-  <div class="mi" onclick="go('settings');closeMM()"><div class="mi-ico">◇</div><div class="mi-lbl">Settings</div></div>
-</div>
-
 <div id="app">
 
   <!-- ══════════ TODAY ══════════ -->
   <div id="today-view" class="view on">
     <div class="split">
       <div class="main">
-        <div class="today-hdr">
-          <div class="today-dow" id="dow">Friday</div>
-          <div class="today-meta">
-            <div>
-              <div class="today-date" id="hdr-date">March 13, 2026</div>
-              <div class="today-time" id="hdr-time">12:00 PM</div>
-            </div>
-            <div class="today-weather" id="hdr-weather">
-              <div class="tw-icon" id="tw-icon"></div>
-              <div>
-                <div class="tw-temp" id="tw-temp"></div>
-                <div class="tw-desc" id="tw-desc"></div>
-              </div>
+        <!-- TOP BAR -->
+        <div class="top-bar">
+          <!-- Left: profile -->
+          <div class="profile-avatar">
+            <div class="profile-initials">JS</div>
+            <div class="profile-ring"></div>
+          </div>
+          <div class="profile-info">
+            <div class="profile-name">Jackson Stewart</div>
+            <div class="profile-sub">
+              <div class="profile-age" id="profile-age">31M</div>
+              <div class="profile-weight-dot"></div>
+              <div class="profile-weight" id="profile-weight">— lbs</div>
             </div>
           </div>
-          <div class="today-rule"></div>
+
+          <!-- Centre: MANOR wordmark -->
+          <div class="top-bar-logo">MANOR</div>
+
+          <!-- Right: time + weather -->
+          <div class="top-bar-right">
+            <div class="top-time" id="hdr-time">12:00 PM</div>
+            <div class="top-weather" id="hdr-weather">
+              <div class="tw-icon" id="tw-icon"></div>
+              <div class="tw-temp" id="tw-temp"></div>
+            </div>
+          </div>
         </div>
+        <div class="top-rule"></div>
 
         <div style="padding:0 20px;margin-bottom:9px"><div class="lbl">Daily Actions</div></div>
         <div class="actions" id="tiles"></div>
 
-        <button id="ver" onclick="showVersion()">v3.0</button>
+        <button id="ver" onclick="showVersion()">v0.5</button>
 
         <div id="dc-wrap">
-          <button class="dc-btn" id="dc-btn" onclick="markComplete()">
+          <button class="dc-btn" id="dc-btn">
             <div class="dc-dot"></div>
             <span id="dc-txt">Day Complete</span>
           </button>
@@ -705,34 +895,48 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
             </div>
           </div>
 
-          <div class="side-streak">
-            <div class="streak-n" id="streak-n">0</div>
+          <!-- Single completion ring for all 5 actions -->
+          <div class="ring-wrap">
+            <div class="ring-outer">
+              <svg class="ring-svg" viewBox="0 0 172 172" id="ring-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+              <div class="ring-center">
+                <div class="ring-count" id="ring-count">0</div>
+                <div class="ring-denom">of 5</div>
+              </div>
+            </div>
+            <div class="ring-label" id="ring-label">Daily Actions</div>
+          </div>
+
+          <!-- Streak -->
+          <div class="streak-row">
             <div>
               <div class="streak-lbl">Day Streak</div>
               <div class="streak-sub" id="streak-sub">Start today</div>
             </div>
+            <div class="streak-num" id="streak-n">0</div>
           </div>
 
-          <div class="lbl" style="padding:0 2px;margin-bottom:10px">3-Day Averages</div>
-          <div class="arcs-wrap" id="arcs"></div>
-          <div class="chips" id="chips"></div>
+          <!-- 3 status indicators -->
+          <div class="status-list" id="status-list"></div>
 
-          <div class="spark-card">
-            <div class="spark-hdr">
-              <div class="spark-title">Weight</div>
-              <div class="spark-val" id="spark-val">—</div>
-            </div>
-            <canvas id="spark-canvas" height="42"></canvas>
-            <div class="spark-proj" id="spark-proj"></div>
-          </div>
-
+          <!-- Quote -->
           <div class="side-quote">
             <div class="quote-text" id="quote"></div>
           </div>
+
+          <!-- Settings access -->
+          <button class="side-settings-btn" onclick="go('settings')">
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <circle cx="10" cy="10" r="3"/>
+              <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4"/>
+            </svg>
+            Settings
+          </button>
         </div>
       </div>
     </div>
   </div>
+
 
   <!-- ══════════ ANALYTICS ══════════ -->
   <div id="analytics-view" class="view">
@@ -766,6 +970,25 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
       <div class="view-hdr">Program</div>
       <div class="view-rule"></div>
       <div id="prog-cards"></div>
+    </div>
+  </div>
+
+  <!-- ══════════ TASKS ══════════ -->
+  <div id="tasks-view" class="view">
+    <div class="view-scroll">
+      <div class="view-hdr">Tasks</div>
+      <div class="view-rule"></div>
+      <div id="tasks-filters" class="task-filters">
+        <button class="tf-btn on" onclick="filterTasks('all',this)">All</button>
+        <button class="tf-btn" onclick="filterTasks('open',this)">Open</button>
+        <button class="tf-btn" onclick="filterTasks('done',this)">Done</button>
+      </div>
+      <div id="task-list"></div>
+      <div id="task-empty" class="task-empty" style="display:none">
+        <div class="task-empty-ico">☐</div>
+        <div class="task-empty-txt">No tasks yet</div>
+        <div class="task-empty-sub">Add tasks in Google Sheets → Todos tab</div>
+      </div>
     </div>
   </div>
 
@@ -872,10 +1095,32 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 
 <!-- NAV -->
 <div id="nav">
-  <div class="ni on" id="ni-today" onclick="go('today')"><div class="ni-ico">◎</div><div class="ni-lbl">Today</div></div>
-  <div class="ni" id="ni-analytics" onclick="go('analytics')"><div class="ni-ico">◈</div><div class="ni-lbl">Analytics</div></div>
-  <div class="ni" id="ni-program" onclick="go('program')"><div class="ni-ico">⬡</div><div class="ni-lbl">Program</div></div>
-  <div class="ni" id="ni-more" onclick="toggleMM()"><div class="ni-ico" style="letter-spacing:2px;font-size:13px">···</div><div class="ni-lbl">More</div></div>
+  <div class="ni on" id="ni-today"    onclick="go('today')">
+    <div class="ni-ico">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <circle cx="10" cy="10" r="7.5"/>
+        <circle cx="10" cy="10" r="2.5" fill="currentColor" stroke="none"/>
+      </svg>
+    </div>
+    <div class="ni-lbl">Today</div>
+  </div>
+  <div class="ni" id="ni-campaign" onclick="go('campaign')">
+    <div class="ni-ico">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="10,2.5 13,7.5 18.5,8.5 14.5,12.5 15.5,18 10,15.5 4.5,18 5.5,12.5 1.5,8.5 7,7.5"/>
+      </svg>
+    </div>
+    <div class="ni-lbl">Campaign</div>
+  </div>
+  <div class="ni" id="ni-analytics" onclick="go('analytics')">
+    <div class="ni-ico">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="2,15 7,9 11,12 18,5"/>
+        <line x1="2" y1="18" x2="18" y2="18"/>
+      </svg>
+    </div>
+    <div class="ni-lbl">Analytics</div>
+  </div>
 </div>
 
 <script>
@@ -883,13 +1128,15 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 //  MANOR v3 — Clean Architecture
 // ════════════════════════════════════════════════════════════════════
 
-const VERSION = '3.0.0';
+const VERSION = '0.5.0';
 const LOGGED_BY = 'Jackson';
 const DEFAULT_API = 'https://script.google.com/macros/s/AKfycbyR8OUhzK0P7mQOm65LWyyTL7DqkukdTsEb-MLVdcuzkzW9rduxTFqNaUWPD0tQham6Mg/exec';
 
 // ── State ───────────────────────────────────────────────────────────
 let API = localStorage.getItem('manor_api') || DEFAULT_API;
 let dailyLog = [], workoutLog = [], campaign = null, serverAnalytics = null;
+let todos = [];   // [ { id, title, notes, healthIndicator, completed, completedAt, order } ]
+let todoFilter = 'all'; // 'all' | 'open' | 'done'
 let goals = { wakeGoal:'04:30', weightGoal:140, caloriesMin:1400, caloriesMax:1500, proteinGoal:120, trainingGoal:5 };
 let committedDays = new Set();  // dates locked forever
 let draftDays = new Set();      // dates where Day Complete was pressed (still editable)
@@ -898,7 +1145,7 @@ let activeCascadeKey = null;
 let cascadeSets = {};           // { [exId]: [{id, weight, reps}] }
 
 // Storage keys
-const CK = { d:'md', w:'mw', g:'mg', c:'mc', s:'ms', committed:'manor_committed', draft:'manor_draft', localTs:'manor_local_ts' };
+const CK = { d:'md', w:'mw', g:'mg', c:'mc', s:'ms', committed:'manor_committed', draft:'manor_draft', localTs:'manor_local_ts', todos:'manor_todos' };
 const load = k => { try { return JSON.parse(localStorage.getItem(k)||'null'); } catch { return null; }};
 const save = (k,v) => {
   try {
@@ -1037,6 +1284,7 @@ document.addEventListener('DOMContentLoaded', () => {
   workoutLog = load(CK.w) || [];
   goals      = load(CK.g) || goals;
   campaign   = load(CK.c) || null;
+  todos      = load(CK.todos) || [];
 
   // Sanitise wakeTime — strip any Date strings, keep only HH:MM
   sanitiseWakeTimes(dailyLog);
@@ -1142,10 +1390,12 @@ async function syncAll() {
       if (Array.isArray(d.workoutLog)) workoutLog = d.workoutLog;
       if (d.goals && typeof d.goals === 'object') goals = d.goals;
       if (d.campaign !== undefined)    campaign   = d.campaign;
+      if (Array.isArray(d.todos))      todos      = d.todos;
       sanitiseWakeTimes(dailyLog);
       if (Array.isArray(d.committedDates)) committedDays = new Set(d.committedDates);
       save(CK.d, dailyLog); save(CK.w, workoutLog);
       save(CK.g, goals);    save(CK.c, campaign);
+      save(CK.todos, todos);
       save(CK.committed, [...committedDays]);
     }
     // Analytics always take from server regardless
@@ -1177,17 +1427,40 @@ function setSyncState(state, label) {
 // ════════════════════════════════════════════════════════════════════
 //  CLOCK
 // ════════════════════════════════════════════════════════════════════
+// ── PROFILE ───────────────────────────────────────────────────────────────────
+// Jackson Stewart — DOB April 7, 1994
+const PROFILE_DOB = new Date('1994-04-07T00:00:00');
+const PROFILE_SEX = 'M';
+
+function calcAge() {
+  const now   = new Date();
+  let age     = now.getFullYear() - PROFILE_DOB.getFullYear();
+  const bday  = new Date(now.getFullYear(), PROFILE_DOB.getMonth(), PROFILE_DOB.getDate());
+  if (now < bday) age--;
+  return age;
+}
+
+function renderProfile() {
+  const el = document.getElementById('profile-age');
+  if (el) el.textContent = `${calcAge()}${PROFILE_SEX}`;
+
+  // Most recent checked weight entry
+  const today = todayStr();
+  const wt = [...dailyLog]
+    .filter(e => e.weight && (e.date !== today || e.weight_checked === true))
+    .sort((a,b) => b.date.localeCompare(a.date))[0]?.weight;
+  const wtEl = document.getElementById('profile-weight');
+  if (wtEl) wtEl.textContent = wt ? `${parseFloat(wt).toFixed(1)} lbs` : '— lbs';
+}
+
 function startClock() {
-  const DAYS  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const MONS  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const MONS_S= ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const MONS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   function tick() {
-    const n = new Date();
-    const h = n.getHours(), m = n.getMinutes();
+    const n  = new Date();
+    const h  = n.getHours(), m = n.getMinutes();
     const hd = h % 12 || 12, ampm = h >= 12 ? 'PM' : 'AM';
-    const dow  = document.getElementById('dow');      if (dow)  dow.textContent  = DAYS[n.getDay()];
-    const date = document.getElementById('hdr-date'); if (date) date.textContent = `${MONS[n.getMonth()]} ${n.getDate()}, ${n.getFullYear()}`;
-    const time = document.getElementById('hdr-time'); if (time) time.textContent = `${pad(hd)}:${pad(m)} ${ampm}`;
+    const time = document.getElementById('hdr-time');
+    if (time) time.textContent = `${pad(hd)}:${pad(m)} ${ampm}`;
   }
   tick();
   setInterval(tick, 1000);
@@ -1275,7 +1548,9 @@ function reopenToday() {
   save(CK.committed, [...committedDays]);
   save(CK.draft, [...draftDays]);
   renderAll();
-  toast('Today reopened', 'info');
+  toast('Day reopened · data submission undone', 'info');
+  const te = todayEntry();
+  apiPost({ action:'logDay', entry:{...te, status:'open', loggedBy:LOGGED_BY} });
 }
 
 function checkEOD() {
@@ -1298,6 +1573,7 @@ function renderAll() {
   renderDCBtn();
   renderTiles();
   renderSide();
+  renderProfile();
   if (curView === 'analytics') renderAnalytics();
   if (curView === 'campaign')  renderCampaign();
   if (curView === 'settings')  renderSettings();
@@ -1321,16 +1597,22 @@ function renderDCBtn() {
 
   if (isCommitted()) {
     btn.className = 'dc-btn sent';
+    btn.onclick = null;
     txt.textContent = 'Day Committed';
-    sub.textContent = 'Entries locked permanently';
+    sub.textContent = 'Entries locked permanently at midnight';
   } else if (isDraft()) {
     btn.className = 'dc-btn sent';
+    btn.onclick = null;
     txt.textContent = 'Day Complete ✓';
-    sub.textContent = 'Data sent · edits sync until midnight';
+    sub.innerHTML = 'Data sent · <button onclick="reopenToday()" style="background:none;border:none;color:var(--amber);font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-decoration:underline;padding:0">Undo</button> · locks at midnight';
   } else {
     btn.className = all ? 'dc-btn ready' : 'dc-btn';
+    btn.onclick = markComplete;
     txt.textContent = 'Day Complete';
-    sub.textContent = all ? 'All actions confirmed — tap to mark complete' : `${checkedCount} of ${ACTIONS.length} confirmed`;
+    sub.innerHTML = '';
+    sub.textContent = all
+      ? 'All 5 confirmed — tap to send to analytics'
+      : `${checkedCount} of ${ACTIONS.length} actions confirmed`;
   }
 }
 
@@ -1842,7 +2124,7 @@ function showVersion() {
     <div class="m-title">Version History</div>
     <div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:var(--gold);letter-spacing:-1px;margin-bottom:16px">v${VERSION}</div>
     <div style="border-left:2px solid var(--gb);padding-left:13px;margin-bottom:14px">
-      <div style="font-size:8.5px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:6px">v3.0.0 — Complete Rebuild</div>
+      <div style="font-size:8.5px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:6px">v0.5.0 — Iterating</div>
       <div style="font-size:12px;color:var(--t1);line-height:1.9">Clean architecture from scratch · Dark crimson action tiles · Tap-to-toggle check · Edit via value text · Training cascade with Complete + Clear · Day Complete validates all 5 actions · WakeTime stored as HH:MM always · Draft state is browser-only (never from server) · WHOOP-style arc gauges · Minimal analytics · Midnight auto-commit (server-side)</div>
     </div>
     <div style="padding-left:13px;margin-bottom:18px">
@@ -1857,10 +2139,9 @@ function showVersion() {
 //  RIGHT PANEL
 // ════════════════════════════════════════════════════════════════════
 function renderSide() {
+  renderCompletionRing();
   renderStreak();
-  renderArcs();
-  renderChips();
-  renderSparkline();
+  renderStatusIndicators();
   renderQuote();
 }
 
@@ -1879,12 +2160,162 @@ function calcStreak() {
 function renderStreak() {
   const n = calcStreak();
   const el = document.getElementById('streak-n'); if (el) el.textContent = n;
-  const s = document.getElementById('streak-sub'); if (s) s.textContent = n > 0 ? `${n} day${n>1?'s':''} strong` : 'Start today';
+  const s = document.getElementById('streak-sub');
+  if (s) s.textContent = n > 0 ? `${n} day${n>1?'s':''} strong` : 'Start today';
 }
 
 function renderQuote() {
   const el = document.getElementById('quote'); if (!el) return;
   el.textContent = QUOTES[new Date().getDate() % QUOTES.length];
+}
+
+// ── COMPLETION RING ───────────────────────────────────────────────────
+function renderCompletionRing() {
+  const svg  = document.getElementById('ring-svg');
+  const cnt  = document.getElementById('ring-count');
+  const lbl  = document.getElementById('ring-label');
+  if (!svg) return;
+
+  const te = todayEntry();
+
+  // Per-action state: 'green' | 'amber' | 'empty'
+  const segStates = ACTIONS.map(a => {
+    const v = te[a.id]; const c = te[a.id+'_checked'];
+    const hasVal = v != null && v !== '';
+    if (hasVal && c) return 'green';
+    if (hasVal || c) return 'amber';   // value without check, or check without value
+    return 'empty';
+  });
+
+  const done = segStates.filter(s => s === 'green').length;
+  const allDone = done === ACTIONS.length;
+
+  if (cnt) {
+    cnt.textContent = done;
+    cnt.className = 'ring-count' + (allDone ? ' all' : '');
+  }
+  if (lbl) {
+    lbl.textContent = allDone ? '— All Complete —' : 'Daily Actions';
+    lbl.className = 'ring-label' + (allDone ? ' all' : '');
+  }
+
+  const cx = 86, cy = 86, R = 72, sw = 8;
+  const total = ACTIONS.length;
+  const gapDeg = 5;
+  const segDeg = (360 / total) - gapDeg;
+  const toRad  = d => d * Math.PI / 180;
+
+  const COL = {
+    green: '#3ecf6e',
+    amber: '#f0a030',
+    empty: 'rgba(255,255,255,.055)',
+  };
+  const GLOW = {
+    green: 'filter:drop-shadow(0 0 6px rgba(62,207,110,.5))',
+    amber: 'filter:drop-shadow(0 0 5px rgba(240,160,48,.4))',
+    empty: '',
+  };
+
+  // Short action abbreviations for ring labels
+  const ABBR = ['WAKE','WEIGHT','TRAIN','CALS','PROTEIN'];
+
+  let paths = '';
+  let textEls = '';
+
+  for (let i = 0; i < total; i++) {
+    const midDeg   = -90 + i * (360 / total) + (360 / total) / 2;
+    const startDeg = -90 + i * (360 / total) + gapDeg / 2;
+    const endDeg   = startDeg + segDeg;
+    const x1 = cx + R * Math.cos(toRad(startDeg));
+    const y1 = cy + R * Math.sin(toRad(startDeg));
+    const x2 = cx + R * Math.cos(toRad(endDeg));
+    const y2 = cy + R * Math.sin(toRad(endDeg));
+    const st = segStates[i];
+    const col = COL[st];
+    const glow = GLOW[st];
+
+    paths += `<path d="M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${R} ${R} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)}"
+      fill="none" stroke="${col}" stroke-width="${sw}" stroke-linecap="round"
+      style="${glow}"/>`;
+
+    // Action label outside ring
+    const labelR = R + 18;
+    const lx = cx + labelR * Math.cos(toRad(midDeg));
+    const ly = cy + labelR * Math.sin(toRad(midDeg));
+    const labelCol = st === 'green' ? 'rgba(62,207,110,.55)' : st === 'amber' ? 'rgba(240,160,48,.5)' : 'rgba(255,255,255,.12)';
+    textEls += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" dominant-baseline="middle"
+      font-family="Outfit,sans-serif" font-weight="700" font-size="6.5" letter-spacing="1.5"
+      fill="${labelCol}">${ABBR[i]}</text>`;
+  }
+
+  svg.innerHTML = paths + textEls;
+  svg.setAttribute('viewBox', `0 0 172 172`);
+}
+
+// ── STATUS INDICATORS ─────────────────────────────────────────────────
+function renderStatusIndicators() {
+  const el = document.getElementById('status-list'); if (!el) return;
+  el.innerHTML = '';
+  const a = getAnalytics();
+
+  const indicators = [
+    buildCaloriesIndicator(a),
+    buildTrainingIndicator(a),
+    buildWeightIndicator(a),
+  ];
+
+  indicators.forEach(ind => {
+    const row = document.createElement('div'); row.className = 'si';
+    row.innerHTML = `
+      <div class="si-dot ${ind.dot}"></div>
+      <div class="si-body">
+        <div class="si-label">${ind.label}</div>
+        <div class="si-value">${ind.value}</div>
+        ${ind.sub ? `<div class="si-sub">${ind.sub}</div>` : ''}
+      </div>`;
+    el.appendChild(row);
+  });
+}
+
+function buildCaloriesIndicator(a) {
+  const cal = a.rolling3?.calories;
+  if (cal == null) return { label:'Calories · 3-Day Avg', value:'—', sub:'No data yet', dot:'n' };
+  const inTarget = cal >= goals.caloriesMin && cal <= goals.caloriesMax;
+  const over     = cal > goals.caloriesMax;
+  const dot      = inTarget ? 'g' : 'a';
+  const sub      = inTarget
+    ? `On target  ·  ${goals.caloriesMin}–${goals.caloriesMax} kcal`
+    : over
+      ? `+${cal - goals.caloriesMax} kcal over target`
+      : `${goals.caloriesMin - cal} kcal under target`;
+  return { label:'Calories · 3-Day Avg', value:`${Number(cal).toLocaleString()} kcal`, sub, dot };
+}
+
+function buildTrainingIndicator(a) {
+  const s7   = a.sessions7;
+  const goal = goals.trainingGoal || 5;
+  if (s7 == null) return { label:'Training · 7 Days', value:'—', sub:'No sessions yet', dot:'n' };
+  const dot  = s7 >= goal ? 'g' : s7 >= goal - 1 ? 'a' : 'r';
+  const sub  = s7 >= goal
+    ? `On pace  ·  ${goal} sessions/wk target`
+    : `${goal - s7} session${goal-s7!==1?'s':''} behind pace`;
+  return { label:'Training · 7 Days', value:`${s7} / ${goal}`, sub, dot };
+}
+
+function buildWeightIndicator(a) {
+  const wt = a.weightTrend;
+  if (!wt?.current) return { label:'Weight Trajectory', value:'—', sub:'Log weight to track', dot:'n' };
+  const cur  = parseFloat(wt.current).toFixed(1);
+  const goal = goals.weightGoal;
+  const diff = goal ? (parseFloat(wt.current) - goal).toFixed(1) : null;
+  const diffStr = diff != null
+    ? (+diff < 0 ? `${Math.abs(diff)} lbs to goal` : +diff === 0 ? 'At goal' : `${diff} lbs above goal`)
+    : '';
+  const sub  = wt.label && wt.label !== 'Waiting'
+    ? `${wt.label}${diffStr ? '  ·  '+diffStr : ''}`
+    : diffStr || '—';
+  const dot  = wt.status === 'g' ? 'g' : wt.status === 'r' ? 'r' : 'a';
+  return { label:'Weight Trajectory', value:`${cur} lbs`, sub, dot };
 }
 
 function getAnalytics() {
@@ -1894,20 +2325,14 @@ function getAnalytics() {
 function computeAnalytics() {
   const today = todayStr();
 
-  // For today: only use values that are checked (green) — unchecked = amber, not confirmed
-  // For past days: all values count (they've been committed at midnight)
+  // Only count today's fields if checked (green)
   const effectiveLog = dailyLog.map(e => {
-    if (e.date !== today) return e;  // past days: use as-is
-    // Today: mask out any field that isn't checked
-    const masked = { date: e.date };
-    ['calories','protein','weight','wakeTime','trainingType'].forEach(field => {
-      if (e[field] != null && e[field] !== '' && e[field + '_checked'] === true) {
-        masked[field] = e[field];
-        masked[field + '_checked'] = true;
-        if (e[field + '_loggedAt']) masked[field + '_loggedAt'] = e[field + '_loggedAt'];
-      }
+    if (e.date !== today) return e;
+    const m = { date: e.date };
+    ['calories','protein','weight','wakeTime','trainingType'].forEach(f => {
+      if (e[f] != null && e[f] !== '' && e[f+'_checked'] === true) m[f] = e[f];
     });
-    return masked;
+    return m;
   });
 
   const sorted = [...effectiveLog].filter(e => e.date <= today).sort((a,b) => b.date.localeCompare(a.date));
@@ -1920,19 +2345,18 @@ function computeAnalytics() {
   const sessions7 = effectiveLog.filter(e => e.trainingType && e.date >= d7k && e.date <= today).length;
   const l3train   = last3.filter(e => e.trainingType).length;
 
-  // Calorie phase
   let calPhase = 'Waiting', calStatus = 'gray';
   if (avgCal != null) {
-    if      (avgCal < 1400)  { calPhase = 'Under-nutrition';  calStatus = 'r'; }
-    else if (avgCal <= 1500) { calPhase = 'Deficit · Cut';    calStatus = 'g'; }
-    else if (avgCal <= 2400) { calPhase = 'Maintenance';       calStatus = 'a'; }
-    else                     { calPhase = 'Surplus · Bulk';    calStatus = 'b'; }
+    if      (avgCal < 1400)  { calPhase = 'Under-nutrition'; calStatus = 'r'; }
+    else if (avgCal <= 1500) { calPhase = 'Deficit · Cut';   calStatus = 'g'; }
+    else if (avgCal <= 2400) { calPhase = 'Maintenance';      calStatus = 'a'; }
+    else                     { calPhase = 'Surplus · Bulk';   calStatus = 'b'; }
   }
   let proLabel = 'Waiting', proStatus = 'gray';
   if (avgPro != null) {
-    if      (avgPro < 100)   { proLabel = 'Below Minimum'; proStatus = 'r'; }
-    else if (avgPro < 120)   { proLabel = 'Acceptable';    proStatus = 'a'; }
-    else                     { proLabel = 'On Target';     proStatus = 'g'; }
+    if      (avgPro < 100) { proLabel = 'Below Minimum'; proStatus = 'r'; }
+    else if (avgPro < 120) { proLabel = 'Acceptable';    proStatus = 'a'; }
+    else                   { proLabel = 'On Target';     proStatus = 'g'; }
   }
   let trainLabel = 'Waiting', trainStatus = 'gray';
   if (last3.length > 0) {
@@ -1942,140 +2366,34 @@ function computeAnalytics() {
     else              { trainLabel = 'Exceeding';         trainStatus = 'gold'; }
   }
 
-  // Weight trend — use effective weight (checked only for today)
+  // Weight trend
   const wtData = sorted.filter(e => e.weight).slice(0, 14);
-  let wtTrend = null, wtLabel = 'Waiting', wtStatus = 'gray', projDate = null, curWt = null;
+  let wtLabel = 'Waiting', wtStatus = 'gray', projDate = null, curWt = null;
   if (wtData.length) curWt = wtData[0].weight;
   if (wtData.length >= 2) {
     const a = wtData[0], b = wtData[wtData.length-1];
     const days = Math.max(1, Math.round(Math.abs(new Date(a.date+'T00:00:00') - new Date(b.date+'T00:00:00')) / 86400000));
-    wtTrend = (a.weight - b.weight) / days;
+    const wtTrend = (a.weight - b.weight) / days;
     const pw = wtTrend * 7;
-    if      (Math.abs(pw) < 0.1) { wtLabel = 'Stable';                    wtStatus = 'a'; }
+    if      (Math.abs(pw) < 0.1) { wtLabel = 'Stable';                              wtStatus = 'a'; }
     else if (pw < 0)              { wtLabel = `↓ ${Math.abs(pw).toFixed(1)} lbs/wk`; wtStatus = 'g'; }
-    else                          { wtLabel = `↑ ${pw.toFixed(1)} lbs/wk`; wtStatus = 'a'; }
+    else                          { wtLabel = `↑ ${pw.toFixed(1)} lbs/wk`;           wtStatus = 'r'; }
     if (goals.weightGoal && wtTrend !== 0) {
-      const daysToGoal = (goals.weightGoal - a.weight) / wtTrend;
-      if (daysToGoal > 0 && daysToGoal < 365) {
-        const pd = new Date(a.date+'T00:00:00'); pd.setDate(pd.getDate() + Math.round(daysToGoal));
+      const dToGoal = (goals.weightGoal - a.weight) / wtTrend;
+      if (dToGoal > 0 && dToGoal < 365) {
+        const pd = new Date(a.date+'T00:00:00'); pd.setDate(pd.getDate() + Math.round(dToGoal));
         projDate = pd.toISOString().slice(0,10);
       }
     }
   }
 
   return {
-    rolling3: { calories: avgCal!=null?Math.round(avgCal):null, protein: avgPro!=null?Math.round(avgPro):null, sessions: l3train },
+    rolling3:    { calories: avgCal!=null?Math.round(avgCal):null, protein: avgPro!=null?Math.round(avgPro):null, sessions: l3train },
     calPhase, calStatus, proLabel, proStatus, trainLabel, trainStatus, sessions7,
     weightTrend: { label:wtLabel, status:wtStatus, projectedDate:projDate, current:curWt }
   };
 }
 
-function drawArc(canvas, pct, color) {
-  const W=80, H=50, cx=W/2, cy=H-2, R=33, sw=5.5;
-  const c = Math.max(0, Math.min(1, pct||0));
-  const sa = Math.PI, ea = sa + Math.PI*c;
-  const x1=cx+R*Math.cos(sa), y1=cy+R*Math.sin(sa);
-  const x2=cx+R*Math.cos(ea), y2=cy+R*Math.sin(ea);
-  const lg = c > 0.5 ? 1 : 0;
-  if (canvas.tagName === 'svg') {
-    canvas.setAttribute('viewBox',`0 0 ${W} ${H}`);
-    canvas.setAttribute('width', W); canvas.setAttribute('height', H);
-    canvas.innerHTML = `
-      <path d="M ${cx-R} ${cy} A ${R} ${R} 0 0 1 ${cx+R} ${cy}" fill="none" stroke="rgba(255,255,255,.055)" stroke-width="${sw}" stroke-linecap="round"/>
-      ${c > 0 ? `<path d="M ${x1} ${y1} A ${R} ${R} 0 ${lg} 1 ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" style="filter:drop-shadow(0 0 3px ${color}66)"/>` : ''}`;
-  }
-}
-
-function renderArcs() {
-  const el = document.getElementById('arcs'); if (!el) return;
-  el.innerHTML = '';
-  const a = getAnalytics();
-  const gauges = [
-    { lbl:'Calories', unit:'kcal', val:a.rolling3.calories, pct: a.rolling3.calories!=null?Math.min(a.rolling3.calories/(goals.caloriesMax||1500),1):0,
-      color: a.calStatus==='g'?'#3ecf6e':a.calStatus==='r'?'#e05555':a.calStatus==='b'?'#5a9cf5':'#c9a84c',
-      phase: a.calPhase.split('·')[0].trim(), phaseCls: a.calStatus },
-    { lbl:'Protein', unit:'g', val:a.rolling3.protein, pct: a.rolling3.protein!=null?Math.min(a.rolling3.protein/(goals.proteinGoal||120),1):0,
-      color: a.proStatus==='g'?'#3ecf6e':a.proStatus==='r'?'#e05555':'#f0a030',
-      phase: a.proLabel, phaseCls: a.proStatus },
-    { lbl:'Training', unit:'/wk', val:a.sessions7, pct: a.sessions7!=null?Math.min(a.sessions7/(goals.trainingGoal||5),1):0,
-      color: a.trainStatus==='g'?'#3ecf6e':a.trainStatus==='gold'?'#c9a84c':'#f0a030',
-      phase: a.trainLabel, phaseCls: a.trainStatus },
-  ];
-
-  gauges.forEach(g => {
-    const card = document.createElement('div'); card.className = 'arc-card';
-    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-    svg.style.cssText = 'display:block;margin:0 auto';
-    drawArc(svg, g.pct, g.color);
-    card.innerHTML = `<div class="arc-svg-wrap">${svg.outerHTML}<div class="arc-center"><div class="arc-val">${g.val!=null?g.val:'—'}</div><div class="arc-unit">${g.unit}</div></div></div><div class="arc-lbl">${g.lbl}</div><div class="arc-phase" style="color:${g.color}">${g.phase}</div>`;
-    // Re-draw after appending so SVG renders
-    const svgEl = card.querySelector('svg'); if (svgEl) drawArc(svgEl, g.pct, g.color);
-    el.appendChild(card);
-  });
-}
-
-function renderChips() {
-  const el = document.getElementById('chips'); if (!el) return;
-  el.innerHTML = '';
-  const a = getAnalytics();
-  const chips = [
-    { lbl: a.calPhase,              cls: a.calStatus },
-    { lbl: a.proLabel,              cls: a.proStatus },
-    { lbl: a.trainLabel,            cls: a.trainStatus },
-    { lbl: a.weightTrend.label,     cls: a.weightTrend.status },
-  ].filter(c => c.lbl && c.lbl !== 'Waiting');
-  chips.forEach(c => {
-    el.innerHTML += `<div class="chip ${c.cls}">${c.lbl}</div>`;
-  });
-}
-
-function renderSparkline() {
-  const canvas = document.getElementById('spark-canvas'); if (!canvas) return;
-  const a = getAnalytics();
-  const wt = a.weightTrend;
-  const sv = document.getElementById('spark-val'); if (sv) sv.textContent = wt.current ? parseFloat(wt.current).toFixed(1)+' lbs' : '—';
-  const sp = document.getElementById('spark-proj'); if (sp) sp.textContent = wt.projectedDate ? `Goal (${goals.weightGoal}lbs) → ${wt.projectedDate}` : '';
-
-  const today = todayStr();
-  const cut = new Date(); cut.setDate(cut.getDate()-13);
-
-  // Only include today's weight if it's checked (green)
-  const data = [...dailyLog].filter(e => {
-    if (!e.weight) return false;
-    if (new Date(e.date+'T00:00:00') < cut) return false;
-    if (e.date === today) return e.weight_checked === true;
-    return true;
-  }).sort((a,b) => a.date.localeCompare(b.date));
-
-  const ctx = canvas.getContext('2d');
-  const W = canvas.parentElement?.clientWidth - 28 || 220; const H = 42;
-  canvas.width = W; canvas.height = H;
-  ctx.clearRect(0,0,W,H);
-  if (data.length < 2) {
-    ctx.fillStyle = 'rgba(255,255,255,.1)'; ctx.font = '9px Outfit'; ctx.textAlign = 'center';
-    ctx.fillText('Log weight to see trend', W/2, H/2+3); return;
-  }
-  const vals = data.map(d=>d.weight);
-  const mn = Math.min(...vals)*.998, mx = Math.max(...vals)*1.002;
-  const x = i => i / (data.length-1) * W;
-  const y = v => H-3 - ((v-mn)/(mx-mn||1))*(H-6);
-  const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0,'rgba(62,207,110,.18)'); grad.addColorStop(1,'transparent');
-  ctx.beginPath(); data.forEach((d,i) => i===0?ctx.moveTo(x(i),y(d.weight)):ctx.lineTo(x(i),y(d.weight)));
-  ctx.lineTo(x(data.length-1),H); ctx.lineTo(0,H); ctx.closePath();
-  ctx.fillStyle = grad; ctx.fill();
-  ctx.beginPath(); ctx.strokeStyle='#3ecf6e'; ctx.lineWidth=1.5; ctx.lineJoin='round';
-  data.forEach((d,i)=>i===0?ctx.moveTo(x(i),y(d.weight)):ctx.lineTo(x(i),y(d.weight)));
-  ctx.stroke();
-  if (goals.weightGoal>=mn&&goals.weightGoal<=mx) {
-    const gy=y(goals.weightGoal); ctx.setLineDash([3,4]); ctx.strokeStyle='rgba(201,168,76,.35)'; ctx.lineWidth=1;
-    ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); ctx.setLineDash([]);
-  }
-  const lx=x(data.length-1), ly=y(data.at(-1).weight);
-  ctx.fillStyle='#3ecf6e'; ctx.beginPath(); ctx.arc(lx,ly,3,0,Math.PI*2); ctx.fill();
-}
-
-// ════════════════════════════════════════════════════════════════════
 //  ANALYTICS VIEW
 // ════════════════════════════════════════════════════════════════════
 function renderAnalytics() {
@@ -2274,23 +2592,140 @@ function clearCache(){
 // ════════════════════════════════════════════════════════════════════
 //  NAV
 // ════════════════════════════════════════════════════════════════════
-const VIEWS = ['today','analytics','program','campaign','settings'];
+const VIEWS = ['today','analytics','program','tasks','campaign','settings'];
 function go(v) {
   curView = v;
   VIEWS.forEach(id => { const el=document.getElementById(id+'-view'); if(el) el.classList.toggle('on',id===v); });
-  ['today','analytics','program'].forEach(id => { const n=document.getElementById('ni-'+id); if(n) n.classList.toggle('on',id===v); });
-  document.getElementById('ni-more').classList.toggle('on',v==='campaign'||v==='settings');
+  // Only 3 nav items now
+  ['today','campaign','analytics'].forEach(id => {
+    const n = document.getElementById('ni-'+id);
+    if (n) n.classList.toggle('on', id===v);
+  });
   if (v==='analytics') renderAnalytics();
   if (v==='campaign')  renderCampaign();
   if (v==='settings')  renderSettings();
+  if (v==='tasks')     renderTasks();
 }
-function toggleMM(){document.getElementById('more-menu').classList.toggle('on')}
-function closeMM(){document.getElementById('more-menu').classList.remove('on')}
-document.addEventListener('click',e=>{if(!e.target.closest('#more-menu')&&!e.target.closest('#ni-more'))closeMM();});
+
 
 // ════════════════════════════════════════════════════════════════════
-//  TOAST
+//  TASKS
 // ════════════════════════════════════════════════════════════════════
+
+// Health indicator display metadata
+const HI_META = {
+  wakeTime:     { label:'Wake Up Early',   color:'#5a9cf5', cls:'wake'     },
+  weight:       { label:'Body Weight',     color:'#2dd4bf', cls:'weight'   },
+  trainingType: { label:'Training',        color:'#a87fd4', cls:'training' },
+  calories:     { label:'Calories',        color:'#c9a84c', cls:'calories' },
+  protein:      { label:'Protein',         color:'#3ecf6e', cls:'protein'  },
+};
+
+function filterTasks(filter, btn) {
+  todoFilter = filter;
+  document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  renderTasks();
+}
+
+function renderTasks() {
+  const list  = document.getElementById('task-list');
+  const empty = document.getElementById('task-empty');
+  if (!list) return;
+
+  // Sort: incomplete first (by order), completed at bottom
+  const sorted = [...todos].sort((a, b) => {
+    if (a.completed !== b.completed) return a.completed ? 1 : -1;
+    return (a.order || 0) - (b.order || 0);
+  });
+
+  // Apply filter
+  const filtered = sorted.filter(t => {
+    if (todoFilter === 'open') return !t.completed;
+    if (todoFilter === 'done') return  t.completed;
+    return true;
+  });
+
+  list.innerHTML = '';
+
+  if (!filtered.length) {
+    list.style.display = 'none';
+    empty.style.display = 'flex';
+    empty.querySelector('.task-empty-sub').textContent =
+      todoFilter === 'done' ? 'No completed tasks yet' :
+      todoFilter === 'open' ? 'All tasks complete!' :
+      'Add tasks in Google Sheets → Todos tab';
+    return;
+  }
+
+  list.style.display = 'block';
+  empty.style.display = 'none';
+
+  filtered.forEach(todo => {
+    const item = document.createElement('div');
+    item.className = 'task-item' + (todo.completed ? ' done-item' : '');
+    item.dataset.id = todo.id;
+
+    const hi     = todo.healthIndicator ? HI_META[todo.healthIndicator] : null;
+    const hiTag  = hi
+      ? `<div class="task-hi-tag ${hi.cls}"><div class="task-hi-dot"></div>${hi.label} · <span style="opacity:.6;font-size:7px">${todo.id}</span></div>`
+      : `<div class="task-hi-tag"><span style="opacity:.4;font-size:7px">${todo.id || '—'}</span></div>`;
+
+    const completedStr = todo.completedAt
+      ? `Completed ${todo.completedAt}`
+      : '';
+
+    const notesHtml = todo.notes
+      ? `<div class="task-notes">${todo.notes}</div>`
+      : '';
+
+    item.innerHTML = `
+      <div class="task-row">
+        <div class="task-check" onclick="toggleTodo(event,'${todo.id}')">${todo.completed ? '✓' : ''}</div>
+        <div class="task-main">
+          <div class="task-title">${todo.title || '—'}</div>
+          ${todo.healthIndicator && hi ? `<div class="task-meta" style="color:${hi.color}">${hi.label}</div>` : ''}
+        </div>
+        <div class="task-chev">›</div>
+      </div>
+      <div class="task-body">
+        ${notesHtml}
+        <div class="task-footer">
+          <div class="task-footer-left">${completedStr}</div>
+          ${hiTag}
+        </div>
+      </div>
+    `;
+
+    // Chevron / row click = expand/collapse (but not on the checkbox)
+    item.querySelector('.task-row').addEventListener('click', e => {
+      if (e.target.closest('.task-check')) return;
+      item.classList.toggle('open');
+    });
+
+    list.appendChild(item);
+  });
+}
+
+async function toggleTodo(e, todoId) {
+  e.stopPropagation();
+  const todo = todos.find(t => t.id === todoId);
+  if (!todo) return;
+
+  todo.completed  = !todo.completed;
+  todo.completedAt = todo.completed
+    ? new Date().toLocaleDateString('en-CA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' })
+    : null;
+  save(CK.todos, todos);
+  renderTasks();
+
+  const msg = todo.completed ? `✓ ${todo.title}` : `Reopened: ${todo.title}`;
+  toast(msg, todo.completed ? 'ok' : 'info');
+
+  // Best-effort server push
+  apiPost({ action:'toggleTodo', id: todoId, completed: todo.completed, completedAt: todo.completedAt });
+}
+
 function toast(msg, type='ok') {
   const el=document.createElement('div'); el.className='toast '+type; el.textContent=msg;
   document.getElementById('toasts').appendChild(el);
