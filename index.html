@@ -119,7 +119,7 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 .tile.locked{opacity:.55;pointer-events:none}
 
 /* tile inner layout */
-.tile-body{display:flex;align-items:center;padding:16px 18px 12px;gap:14px}
+.tile-body{display:flex;align-items:center;padding:16px 18px 14px;gap:14px}
 .tile-check{
   width:30px;height:30px;border-radius:50%;flex-shrink:0;
   border:1.5px solid rgba(180,50,40,.4);
@@ -130,47 +130,75 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 .tile.done .tile-check{background:var(--green);border-color:var(--green);color:#000;
   box-shadow:0 0 16px rgba(62,207,110,.28)}
 .tile.warn .tile-check{background:var(--amber);border-color:var(--amber);color:#000}
-/* has-value (unchecked): amber ring, no fill — inviting re-check */
-.tile.has-value .tile-check{border-color:var(--amber);border-width:1.5px;color:transparent;background:transparent}
+.tile.has-value .tile-check{border-color:var(--amber);color:transparent;background:transparent}
 
 .tile-text{flex:1;min-width:0}
+
+/* HEADER — dynamic color per state */
 .tile-label{
-  font-size:8.5px;font-weight:700;letter-spacing:2.8px;
-  color:var(--crim2);text-transform:uppercase;margin-bottom:5px;
+  font-size:8px;font-weight:700;letter-spacing:3px;
+  color:var(--crim2);text-transform:uppercase;margin-bottom:6px;
   transition:color .18s;
 }
-.tile.done .tile-label{color:rgba(62,207,110,.65)}
-.tile.warn .tile-label{color:rgba(240,160,48,.7)}
+.tile.done .tile-label{color:rgba(62,207,110,.7)}
+.tile.warn .tile-label{color:rgba(240,160,48,.75)}
 .tile.has-value .tile-label{color:rgba(240,160,48,.65)}
-.tile.training-open .tile-label{color:rgba(240,160,48,.6)}
 
-.tile-value{
-  font-family:'Cormorant Garamond',serif;font-weight:300;font-size:38px;
-  color:var(--t4);line-height:1;letter-spacing:-1.5px;
-  transition:color .18s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+/* MAIN TEXT row — sub text + EDIT + CLEAR inline */
+.tile-main-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:1px}
+
+/* Sub text (default grey, white when value entered) */
+.tile-sub{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:32px;color:var(--t3);
+  line-height:1;letter-spacing:-1px;
+  transition:color .18s;flex-shrink:1;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.tile-value.ph{
-  font-size:18px;color:var(--t4);letter-spacing:0;
-  font-style:italic;cursor:default;
+.tile-sub.has-val{color:#fff;font-size:34px}
+.tile.warn .tile-sub{color:var(--amber)}
+.tile.has-value .tile-sub{color:rgba(240,160,48,.9)}
+
+/* Default placeholder text — lighter grey */
+.tile-sub.ph{
+  font-size:16px;color:rgba(255,255,255,.18);
+  letter-spacing:0;font-style:italic;
 }
-.tile.done .tile-value{color:#fff}
-.tile.warn .tile-value{color:var(--amber)}
-.tile.has-value .tile-value{color:rgba(240,160,48,.85)}
+
+/* EDIT button — subtle grey bordered */
+.tile-edit-btn{
+  flex-shrink:0;
+  font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.28);border:1px solid rgba(255,255,255,.14);
+  background:none;border-radius:6px;padding:4px 9px;cursor:pointer;
+  transition:all .14s;white-space:nowrap;
+}
+.tile-edit-btn:hover{color:rgba(255,255,255,.55);border-color:rgba(255,255,255,.28)}
+
+/* CLEAR button — subtle gold/amber bordered */
+.tile-clear-btn{
+  flex-shrink:0;
+  font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(201,168,76,.45);border:1px solid rgba(201,168,76,.22);
+  background:none;border-radius:6px;padding:4px 9px;cursor:pointer;
+  transition:all .14s;white-space:nowrap;
+}
+.tile-clear-btn:hover{color:rgba(201,168,76,.8);border-color:rgba(201,168,76,.45)}
 
 .tile-info{
-  width:28px;height:28px;border-radius:8px;flex-shrink:0;
+  width:26px;height:26px;border-radius:7px;flex-shrink:0;
   border:1px solid var(--b1);background:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;
+  font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;
   color:var(--t3);transition:all .14s;
 }
 .tile-info:hover{border-color:var(--b2);color:var(--t1)}
 
-/* stamp (appears when checked or has-value) */
+/* stamp row */
 .tile-stamp{
   display:none;align-items:center;gap:6px;
-  padding:0 18px 12px;margin-top:-2px;
-  border-top:1px solid rgba(255,255,255,.04);padding-top:9px;
+  padding:9px 18px 12px;
+  border-top:1px solid rgba(255,255,255,.04);
 }
 .tile.done .tile-stamp,.tile.warn .tile-stamp,.tile.has-value .tile-stamp{display:flex}
 .stamp-dot{width:4px;height:4px;border-radius:50%;background:var(--green);flex-shrink:0}
@@ -178,27 +206,9 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 .stamp-text{font-size:9px;color:var(--t3);letter-spacing:.3px}
 
 /* delta row */
-.tile-delta{display:none;padding:0 18px 10px;font-size:9.5px;color:var(--t2)}
+.tile-delta{display:none;padding:0 18px 10px;font-size:9px;color:var(--t2)}
 .tile.done .tile-delta,.tile.warn .tile-delta,.tile.has-value .tile-delta{display:block}
 .dg{color:var(--green)}.dw{color:var(--amber)}.dn{color:var(--t3)}
-
-/* edit hint — shown when has value (any state), tappable */
-.tile-edit-wrap{display:flex;align-items:center;gap:5px;margin-top:4px;cursor:pointer}
-.tile-edit-hint{
-  font-size:7.5px;font-weight:700;letter-spacing:1.5px;color:var(--t4);
-  text-transform:uppercase;display:none;
-  border-bottom:1px solid var(--t4);padding-bottom:1px;
-  transition:color .14s,border-color .14s;
-}
-.tile.done .tile-edit-hint,.tile.warn .tile-edit-hint,.tile.has-value .tile-edit-hint{display:inline}
-.tile-edit-hint:hover{color:var(--t2);border-bottom-color:var(--t2)}
-
-/* uncheck nudge for has-value state */
-.tile-uncheck-hint{
-  display:none;font-size:7.5px;color:rgba(240,160,48,.5);
-  letter-spacing:1px;text-transform:uppercase;margin-top:3px;
-}
-.tile.has-value .tile-uncheck-hint{display:block}
 
 /* ── TRAINING CASCADE ──────────────────────────────────── */
 .cascade{
@@ -927,11 +937,11 @@ const P = {
 
 // ── Action tile definitions ─────────────────────────────────────────
 const ACTIONS = [
-  { id:'wakeTime',     label:'Wake Up Early',   ph:'Log your wake time',    unit:'',    type:'time'     },
-  { id:'weight',       label:'Log Body Weight', ph:"Today's weight",        unit:'lbs', type:'number'   },
-  { id:'trainingType', label:'Training',        ph:'Log your session',      unit:'',    type:'training' },
-  { id:'calories',     label:'Total Calories',  ph:'Calorie intake today',  unit:'kcal',type:'number'   },
-  { id:'protein',      label:'Total Protein',   ph:'Protein intake today',  unit:'g',   type:'number'   },
+  { id:'wakeTime',     label:'Wake Up Early',      sub:'Wake Time',                  unit:'',    type:'time'     },
+  { id:'weight',       label:'Fasted Body Weight',  sub:'Record body weight',         unit:'lbs', type:'number'   },
+  { id:'trainingType', label:'Training Session',    sub:'Track your workout',         unit:'',    type:'training' },
+  { id:'calories',     label:'Daily Calories',      sub:'Total daily calorie intake', unit:'kcal',type:'number'   },
+  { id:'protein',      label:'Protein Intake',      sub:'Total daily protein intake', unit:'g',   type:'number'   },
 ];
 
 // ── Info content ─────────────────────────────────────────────────────
@@ -1289,131 +1299,125 @@ function renderTiles() {
     const checked = te[def.id + '_checked'] === true;
     const hasVal  = raw != null && raw !== '';
 
-    // ── Determine state ──────────────────────────────────────────
-    // empty:        no value, not checked  → crimson base, tap = open modal
-    // checked:      has value AND checked  → green, tap body = uncheck (value preserved)
-    // unchecked:    has value, NOT checked → amber, tap body = re-check
-    // warn:         checked but out of range (e.g. late wake, over cals) → amber override
-    // training-open: cascade is open
-    let state = 'empty';  // 'empty' | 'checked' | 'unchecked' | 'warn'
+    // State: empty | checked | unchecked | warn
+    let state = 'empty';
     if (hasVal && checked) state = 'checked';
-    else if (hasVal && !checked) state = 'unchecked';
-
-    // Goal-based warn override (only when checked)
+    else if (hasVal)       state = 'unchecked';
     if (state === 'checked') {
       if (def.id === 'wakeTime'  && t2m(raw) > t2m(goals.wakeGoal)) state = 'warn';
       if (def.id === 'calories'  && raw > goals.caloriesMax)          state = 'warn';
       if (def.id === 'protein'   && raw < 100)                        state = 'warn';
     }
 
-    const tileClass = {
-      empty:     'tile',
-      checked:   'tile done',
-      unchecked: 'tile has-value',
-      warn:      'tile warn',
-    }[state] + (locked ? ' locked' : '');
+    const tileClass = ({
+      empty:'tile', checked:'tile done', unchecked:'tile has-value', warn:'tile warn'
+    })[state] + (locked ? ' locked' : '');
 
-    // ── Build display value ───────────────────────────────────────
     let displayVal = '';
     if (hasVal) {
-      if (def.id === 'wakeTime')     displayVal = String(raw).slice(0, 5);
-      else if (def.id === 'weight')  displayVal = parseFloat(raw).toFixed(1) + ' lbs';
-      else if (def.id === 'calories')displayVal = Number(raw).toLocaleString() + ' kcal';
-      else if (def.id === 'protein') displayVal = raw + 'g';
-      else                           displayVal = raw;
+      if      (def.id === 'wakeTime')  displayVal = String(raw).slice(0,5);
+      else if (def.id === 'weight')    displayVal = parseFloat(raw).toFixed(1) + ' lbs';
+      else if (def.id === 'calories')  displayVal = Number(raw).toLocaleString() + ' kcal';
+      else if (def.id === 'protein')   displayVal = raw + 'g';
+      else                             displayVal = String(raw);
     }
 
-    // ── Stamp ─────────────────────────────────────────────────────
     const loggedAt = te[def.id + '_loggedAt'] || '';
-    const stamp = hasVal ? `${loggedAt || 'Today'} — ${LOGGED_BY}` : '';
+    const stampTxt = state === 'unchecked'
+      ? `Logged ${loggedAt||'today'} — not yet confirmed`
+      : hasVal ? `${loggedAt||'Today'} — ${LOGGED_BY}` : '';
 
-    // ── Delta (yesterday comparison) ──────────────────────────────
     let delta = '', deltaCls = '';
     if (hasVal) {
       if (def.id === 'wakeTime' && yesterday.wakeTime) {
-        const diff = t2m(raw) - t2m(String(yesterday.wakeTime).slice(0, 5));
-        if (diff < -5)     { delta = `${Math.abs(diff)}min earlier than yesterday`; deltaCls='dg'; }
-        else if (diff > 5) { delta = `${diff}min later than yesterday`;             deltaCls='dw'; }
-        else               { delta = 'Same time as yesterday';                      deltaCls='dn'; }
+        const diff = t2m(raw) - t2m(String(yesterday.wakeTime).slice(0,5));
+        if (diff < -5)     { delta=`${Math.abs(diff)}min earlier than yesterday`; deltaCls='dg'; }
+        else if (diff > 5) { delta=`${diff}min later than yesterday`;             deltaCls='dw'; }
+        else               { delta='Same time as yesterday';                      deltaCls='dn'; }
       } else if (def.id === 'weight' && yesterday.weight) {
-        const diff = (parseFloat(raw) - parseFloat(yesterday.weight)).toFixed(1);
-        delta = +diff < 0 ? `${Math.abs(diff)} lbs down` : +diff > 0 ? `+${diff} lbs from yesterday` : 'Same as yesterday';
-        deltaCls = +diff < 0 ? 'dg' : +diff > 0 ? 'dw' : 'dn';
+        const diff = (parseFloat(raw)-parseFloat(yesterday.weight)).toFixed(1);
+        delta    = +diff<0?`${Math.abs(diff)} lbs down from yesterday`:+diff>0?`+${diff} lbs from yesterday`:'Same as yesterday';
+        deltaCls = +diff<0?'dg':+diff>0?'dw':'dn';
       } else if (def.id === 'calories' && yesterday.calories) {
         const diff = raw - yesterday.calories;
-        delta = diff === 0 ? 'Same as yesterday' : `${Math.abs(diff)} kcal ${diff < 0 ? 'less' : 'more'}`;
-        deltaCls = diff < 0 && raw <= goals.caloriesMax ? 'dg' : diff > 0 && raw > goals.caloriesMax ? 'dw' : 'dn';
+        delta    = diff===0?'Same as yesterday':`${Math.abs(diff)} kcal ${diff<0?'less':'more'} than yesterday`;
+        deltaCls = diff<0&&raw<=goals.caloriesMax?'dg':diff>0&&raw>goals.caloriesMax?'dw':'dn';
       } else if (def.id === 'protein' && yesterday.protein) {
         const diff = raw - yesterday.protein;
-        delta = `${Math.abs(diff)}g ${diff >= 0 ? 'more' : 'less'} than yesterday`;
-        deltaCls = raw >= goals.proteinGoal ? 'dg' : 'dw';
+        delta    = `${Math.abs(diff)}g ${diff>=0?'more':'less'} than yesterday`;
+        deltaCls = raw>=goals.proteinGoal?'dg':'dw';
       } else if (def.id === 'trainingType') {
-        const hasSets = workoutLog.some(e => e.date === todayStr());
-        if (hasSets) { delta = 'Session data logged'; deltaCls = 'dg'; }
+        if (workoutLog.some(e=>e.date===todayStr())) { delta='Session data logged'; deltaCls='dg'; }
       }
     }
 
-    // ── Stamp label tweak for unchecked state ─────────────────────
-    const stampLabel = state === 'unchecked'
-      ? `Logged ${loggedAt||'today'} · not confirmed`
-      : stamp;
-
-    // ── Build tile HTML ───────────────────────────────────────────
     const tile = document.createElement('div');
     tile.className = tileClass;
 
+    const subClass = hasVal ? 'tile-sub has-val' : 'tile-sub ph';
+    const subText  = hasVal ? displayVal : def.sub;
+    const actionBtns = !locked ? `
+      <button class="tile-edit-btn" data-action="edit">Edit</button>
+      ${hasVal ? `<button class="tile-clear-btn" data-action="clear">Clear</button>` : ''}
+    ` : '';
+
     tile.innerHTML = `
       <div class="tile-body">
-        <div class="tile-check">${(state==='checked'||state==='warn') ? '✓' : ''}</div>
+        <div class="tile-check">${(state==='checked'||state==='warn')?'✓':''}</div>
         <div class="tile-text">
           <div class="tile-label">${def.label}</div>
-          <div class="tile-value${hasVal ? '' : ' ph'}" data-edit="${def.id}">${hasVal ? displayVal : def.ph}</div>
-          ${hasVal ? `
-            <div class="tile-edit-wrap">
-              <div class="tile-edit-hint" data-edit="${def.id}">Edit</div>
-            </div>
-            ${state === 'unchecked' ? `<div class="tile-uncheck-hint">↑ tap to confirm</div>` : ''}
-          ` : ''}
+          <div class="tile-main-row">
+            <div class="${subClass}">${subText}</div>
+            ${actionBtns}
+          </div>
         </div>
-        ${!locked ? `<button class="tile-info" onclick="openInfo(event,'${def.id}')" title="Why this matters">i</button>` : ''}
+        ${!locked?`<button class="tile-info" data-action="info">i</button>`:''}
       </div>
-      ${hasVal && stampLabel ? `<div class="tile-stamp"><div class="stamp-dot"></div><div class="stamp-text">${stampLabel}</div></div>` : ''}
-      ${hasVal && delta ? `<div class="tile-delta"><span class="${deltaCls}">${delta}</span></div>` : ''}
-      ${def.id === 'trainingType' && !locked ? `<div class="cascade" id="cascade"></div>` : ''}
+      ${stampTxt?`<div class="tile-stamp"><div class="stamp-dot"></div><div class="stamp-text">${stampTxt}</div></div>`:''}
+      ${delta?`<div class="tile-delta"><span class="${deltaCls}">${delta}</span></div>`:''}
+      ${def.id==='trainingType'&&!locked?`<div class="cascade" id="cascade"></div>`:''}
     `;
 
     if (!locked) {
-      // Clicking the "Edit" hint or the value text → open edit modal (not toggle)
-      tile.querySelectorAll('[data-edit]').forEach(editEl => {
-        editEl.addEventListener('click', e => {
-          e.stopPropagation();
-          if (!hasVal) return; // no value yet, handled by tile click
-          if (def.id === 'trainingType') return; // training edits via cascade
-          openModal(def.id, te);
-        });
+      // EDIT
+      tile.querySelector('[data-action="edit"]')?.addEventListener('click', e => {
+        e.stopPropagation();
+        if (def.id === 'trainingType') toggleCascade(tile);
+        else openModal(def.id, te);
       });
 
-      // Clicking tile body (anywhere else) → toggle check or open modal/cascade
-      tile.addEventListener('click', e => {
-        if (e.target.closest('.tile-info')) return;
-        if (e.target.closest('.cascade')) return;
-        if (e.target.closest('[data-edit]')) return; // handled above
-
+      // CLEAR
+      tile.querySelector('[data-action="clear"]')?.addEventListener('click', e => {
+        e.stopPropagation();
         if (def.id === 'trainingType') {
-          toggleCascade(tile);
-          return;
+          if (confirm('Clear your training session? All logged sets will be removed.')) {
+            const today = todayStr();
+            workoutLog = workoutLog.filter(e => e.date !== today);
+            save(CK.w, workoutLog);
+            cascadeSets = {}; activeCascadeKey = null;
+            clearEntry('trainingType');
+          }
+        } else {
+          clearEntry(def.id);
         }
+      });
 
-        if (state === 'empty') {
-          // No value → open modal to log
-          openModal(def.id, te);
-        } else if (state === 'checked' || state === 'warn') {
-          // Checked → uncheck (value preserved, tile goes amber)
-          toggleCheck(def.id, false);
-        } else if (state === 'unchecked') {
-          // Has value but unchecked → re-check (tile goes green)
-          toggleCheck(def.id, true);
-        }
+      // INFO
+      tile.querySelector('[data-action="info"]')?.addEventListener('click', e => {
+        e.stopPropagation(); openInfo(e, def.id);
+      });
+
+      // CASCADE click isolation
+      tile.querySelector('.cascade')?.addEventListener('click', e => e.stopPropagation());
+
+      // TILE BODY → toggle check only
+      tile.addEventListener('click', e => {
+        if (e.target.closest('[data-action]')) return;
+        if (e.target.closest('.cascade')) return;
+        if (def.id === 'trainingType') { toggleCascade(tile); return; }
+        if (state === 'empty')                      openModal(def.id, te);
+        else if (state==='checked'||state==='warn') toggleCheck(def.id, false);
+        else if (state==='unchecked')               toggleCheck(def.id, true);
       });
     }
 
@@ -1423,6 +1427,7 @@ function renderTiles() {
 
 // ════════════════════════════════════════════════════════════════════
 //  TRAINING CASCADE
+
 // ════════════════════════════════════════════════════════════════════
 function toggleCascade(tile) {
   const panel = tile.querySelector('.cascade');
