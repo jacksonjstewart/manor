@@ -205,14 +205,14 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
   padding:9px 18px 12px;
   border-top:1px solid rgba(255,255,255,.04);
 }
-.tile.done .tile-stamp,.tile.warn .tile-stamp,.tile.has-value .tile-stamp{display:flex}
+.tile.done .tile-stamp,.tile.has-value .tile-stamp{display:flex}
 .stamp-dot{width:4px;height:4px;border-radius:50%;background:var(--green);flex-shrink:0}
-.tile.warn .stamp-dot,.tile.has-value .stamp-dot{background:var(--amber)}
+.tile.has-value .stamp-dot{background:var(--amber)}
 .stamp-text{font-size:9px;color:var(--t3);letter-spacing:.3px}
 
 /* delta row */
 .tile-delta{display:none;padding:0 18px 10px;font-size:9px;color:var(--t2)}
-.tile.done .tile-delta,.tile.warn .tile-delta,.tile.has-value .tile-delta{display:block}
+.tile.done .tile-delta,.tile.has-value .tile-delta{display:block}
 .dg{color:var(--green)}.dw{color:var(--amber)}.dn{color:var(--t3)}
 
 /* ── TRAINING CASCADE ──────────────────────────────────── */
@@ -898,9 +898,15 @@ let activeCascadeKey = null;
 let cascadeSets = {};           // { [exId]: [{id, weight, reps}] }
 
 // Storage keys
-const CK = { d:'md', w:'mw', g:'mg', c:'mc', s:'ms', committed:'manor_committed', draft:'manor_draft' };
+const CK = { d:'md', w:'mw', g:'mg', c:'mc', s:'ms', committed:'manor_committed', draft:'manor_draft', localTs:'manor_local_ts' };
 const load = k => { try { return JSON.parse(localStorage.getItem(k)||'null'); } catch { return null; }};
-const save = (k,v) => { try { localStorage.setItem(k,JSON.stringify(v)); } catch {} };
+const save = (k,v) => {
+  try {
+    localStorage.setItem(k,JSON.stringify(v));
+    // Track when local data was last modified (excluding the timestamp key itself)
+    if (k !== CK.s && k !== CK.localTs) localStorage.setItem(CK.localTs, Date.now().toString());
+  } catch {}
+};
 const pad = n => String(n).padStart(2,'0');
 const todayStr = () => { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
 const t2m = s => { const m=String(s||'').match(/^(\d{1,2}):(\d{2})/); return m?+m[1]*60+ +m[2]:9999; };
@@ -1122,30 +1128,30 @@ async function syncAll() {
   setSyncState('syn', 'SYNCING');
   try {
     const d = await apiGet();
+    if (!d || typeof d !== 'object') throw new Error('invalid');
 
-    // Validate response has meaningful data
-    if (!d || typeof d !== 'object') throw new Error('invalid response');
+    // Compare timestamps: only overwrite local data if server data is newer
+    // than our last local edit. This prevents the server restoring cleared data.
+    const lastSync    = parseInt(load(CK.s) ? new Date(load(CK.s)).getTime() : '0') || 0;
+    const lastLocalTs = parseInt(localStorage.getItem(CK.localTs) || '0') || 0;
+    const serverIsNewer = lastLocalTs === 0 || lastSync > lastLocalTs;
 
-    // Only update local state if server returns valid arrays
-    // Never replace good local data with empty server data
-    if (Array.isArray(d.dailyLog)   && d.dailyLog.length   >= 0) dailyLog   = d.dailyLog;
-    if (Array.isArray(d.workoutLog) && d.workoutLog.length >= 0) workoutLog = d.workoutLog;
-    if (d.goals && typeof d.goals === 'object') goals = d.goals;
-    if (d.campaign !== undefined) campaign = d.campaign;
+    if (serverIsNewer) {
+      // Server data is authoritative — safe to overwrite
+      if (Array.isArray(d.dailyLog))   dailyLog   = d.dailyLog;
+      if (Array.isArray(d.workoutLog)) workoutLog = d.workoutLog;
+      if (d.goals && typeof d.goals === 'object') goals = d.goals;
+      if (d.campaign !== undefined)    campaign   = d.campaign;
+      sanitiseWakeTimes(dailyLog);
+      if (Array.isArray(d.committedDates)) committedDays = new Set(d.committedDates);
+      save(CK.d, dailyLog); save(CK.w, workoutLog);
+      save(CK.g, goals);    save(CK.c, campaign);
+      save(CK.committed, [...committedDays]);
+    }
+    // Analytics always take from server regardless
     if (d.analytics) serverAnalytics = d.analytics;
 
-    // Sanitise wakeTime from server
-    sanitiseWakeTimes(dailyLog);
-
-    // Only take committed dates from server, never draft
-    if (Array.isArray(d.committedDates)) committedDays = new Set(d.committedDates);
-
-    save(CK.d, dailyLog); save(CK.w, workoutLog);
-    save(CK.g, goals);    save(CK.c, campaign);
-    save(CK.committed, [...committedDays]);
     save(CK.s, new Date().toISOString());
-
-    // Success — reset failure count, clear offline banner
     syncFailCount = 0;
     const n = new Date();
     const t = `${n.getHours()%12||12}:${pad(n.getMinutes())}${n.getHours()>=12?'pm':'am'}`;
@@ -1156,13 +1162,7 @@ async function syncAll() {
   } catch (err) {
     syncFailCount++;
     setSyncState('err', '');
-    // Only show OFFLINE banner after 2+ consecutive failures
-    // This prevents a single slow response from scaring the user
-    if (syncFailCount >= 2) {
-      document.getElementById('offline').classList.add('on');
-    }
-    // CRITICAL: do NOT wipe local data or call renderAll on failure
-    // The UI keeps showing whatever was last successfully loaded
+    if (syncFailCount >= 2) document.getElementById('offline').classList.add('on');
     console.warn('MANOR sync failed:', err?.message || err);
   }
 }
@@ -1355,29 +1355,18 @@ function renderTiles() {
     const checked = te[def.id + '_checked'] === true;
     const hasVal  = raw != null && raw !== '';
 
-    // State machine:
-    // empty-unc  = no value, unchecked  → red (crimson)
-    // empty-chk  = no value, checked    → amber (checked but nothing logged yet)
-    // unchecked  = has value, unchecked → amber (logged but not confirmed)
-    // checked    = has value + checked  → green
-    // warn       = checked + off-goal   → amber override
+    // State: empty-unc | empty-chk | unchecked | checked
+    // ANY value + checked = green. No performance-based warn overrides.
     let state = 'empty-unc';
     if      (!hasVal &&  checked) state = 'empty-chk';
     else if ( hasVal && !checked) state = 'unchecked';
     else if ( hasVal &&  checked) state = 'checked';
-
-    if (state === 'checked') {
-      if (def.id === 'wakeTime'  && t2m(raw) > t2m(goals.wakeGoal)) state = 'warn';
-      if (def.id === 'calories'  && raw > goals.caloriesMax)          state = 'warn';
-      if (def.id === 'protein'   && raw < 100)                        state = 'warn';
-    }
 
     const tileClass = ({
       'empty-unc': 'tile',
       'empty-chk': 'tile has-value',
       'unchecked': 'tile has-value',
       'checked':   'tile done',
-      'warn':      'tile warn',
     })[state] + (locked ? ' locked' : '');
 
     let displayVal = '';
@@ -1433,7 +1422,7 @@ function renderTiles() {
 
     tile.innerHTML = `
       <div class="tile-body">
-        <div class="tile-check">${(state==='checked'||state==='warn'||state==='empty-chk')?'✓':''}</div>
+        <div class="tile-check">${(state==='checked'||state==='empty-chk')?'✓':''}</div>
         <div class="tile-text">
           <div class="tile-label">${def.label}</div>
           <div class="tile-main-row">
@@ -1498,13 +1487,13 @@ function renderTiles() {
         // checked    → uncheck → unchecked (amber, value preserved)
         // warn       → uncheck → unchecked (amber, value preserved)
         if (state === 'empty-unc') {
-          toggleCheck(def.id, true);   // red → amber (checked, no value yet)
+          toggleCheck(def.id, true);
         } else if (state === 'empty-chk') {
-          toggleCheck(def.id, false);  // amber → red (unchecked, no value)
+          toggleCheck(def.id, false);
         } else if (state === 'unchecked') {
-          toggleCheck(def.id, true);   // amber → green
-        } else if (state === 'checked' || state === 'warn') {
-          toggleCheck(def.id, false);  // green → amber (value preserved)
+          toggleCheck(def.id, true);
+        } else if (state === 'checked') {
+          toggleCheck(def.id, false);
         }
       });
     }
@@ -1732,24 +1721,42 @@ function findEx(id) {
 }
 
 // ════════════════════════════════════════════════════════════════════
-//  TOGGLE CHECK (value preserved, only confirmed state changes)
+//  TOGGLE CHECK
 // ════════════════════════════════════════════════════════════════════
 function toggleCheck(fieldId, checked) {
   let te = dailyLog.find(e => e.date === todayStr());
-  if (!te) return;
+  if (!te) { if (!checked) return; te = { date:todayStr() }; dailyLog.push(te); }
   te[fieldId + '_checked'] = checked;
   save(CK.d, dailyLog);
+
+  // If Day Complete was already pressed but now not all 5 are green → auto-revert
+  if (isDraft() && !allLogged()) {
+    draftDays.delete(todayStr());
+    save(CK.draft, [...draftDays]);
+    toast('Day reopened — not all actions confirmed', 'info');
+    // Tell server the day is back to open
+    apiPost({ action:'logDay', entry:{...te, status:'open', loggedBy:LOGGED_BY} });
+  }
+
   renderAll();
 }
 async function clearEntry(fieldId) {
   const te = dailyLog.find(e => e.date === todayStr()); if (!te) return;
   delete te[fieldId];
   delete te[fieldId + '_loggedAt'];
-  delete te[fieldId + '_checked'];  // must clear check too → tile returns to red
-  save(CK.d, dailyLog); renderAll();
+  delete te[fieldId + '_checked'];
+  save(CK.d, dailyLog);
+
+  // Revert Day Complete if no longer all green
+  if (isDraft() && !allLogged()) {
+    draftDays.delete(todayStr());
+    save(CK.draft, [...draftDays]);
+    apiPost({ action:'logDay', entry:{...te, status:'open', loggedBy:LOGGED_BY} });
+  }
+
+  renderAll();
   const labels = { wakeTime:'Wake time', weight:'Weight', calories:'Calories', protein:'Protein', trainingType:'Training' };
   toast(`${labels[fieldId]||fieldId} cleared`, 'info');
-  if (isDraft()) try { await apiPost({ action:'logDay', entry:{...te, status:'draft', loggedBy:LOGGED_BY} }); } catch {}
 }
 
 // ════════════════════════════════════════════════════════════════════
@@ -1774,11 +1781,9 @@ function openModal(fieldId, te) {
 }
 
 async function saveModal() {
-  const btn = document.querySelector('.m-save'); if (!btn) return;
   let val = '';
   if (curField === 'wakeTime') {
     const raw = document.getElementById('m-time')?.value || '';
-    // Extract HH:MM — never store as Date object
     const m = raw.trim().match(/^(\d{1,2}):(\d{2})/);
     val = m ? `${pad(+m[1])}:${m[2]}` : '';
   } else {
@@ -1786,26 +1791,24 @@ async function saveModal() {
   }
   if (!val) { closeModal(); return; }
 
-  btn.className = 'm-save'; btn.textContent = 'Saving…';
-
+  // Write to local state
   let te = dailyLog.find(e => e.date === todayStr());
   if (!te) { te = { date:todayStr() }; dailyLog.push(te); }
   te[curField] = curField === 'wakeTime' ? val : Number(val);
   te[curField + '_loggedAt'] = nowStamp();
-  te[curField + '_checked']  = true;  // auto-check when value is saved
-  save(CK.d, dailyLog); renderAll();
+  te[curField + '_checked']  = true;
+  save(CK.d, dailyLog);
 
-  // Save locally first — this is the source of truth
-  // Server sync is best-effort and never blocks or reverts the UI
-  btn.className = 'm-save ok'; btn.textContent = 'Saved ✓';
-  setTimeout(closeModal, 450);
+  // Close modal FIRST — before any DOM rebuild
+  closeModal();
+
+  // Now safe to re-render
+  renderAll();
   toast('Saved');
 
-  // Best-effort server push — silent fail
-  try {
-    const status = isCommitted() ? 'committed' : isDraft() ? 'draft' : 'open';
-    apiPost({ action:'logDay', entry:{...te, status, loggedBy:LOGGED_BY} });
-  } catch { /* silent */ }
+  // Fire-and-forget server push
+  const status = isCommitted() ? 'committed' : isDraft() ? 'draft' : 'open';
+  apiPost({ action:'logDay', entry:{...te, status, loggedBy:LOGGED_BY} });
 }
 
 function closeModal() { document.getElementById('overlay').classList.remove('on'); curField = null; }
@@ -2257,7 +2260,16 @@ async function saveGoals(){
   try{await apiPost({action:'saveGoals',goals});}catch{}
 }
 function saveUrl(){const url=document.getElementById('sg-url').value.trim();if(!url){localStorage.removeItem('manor_api');API=DEFAULT_API;toast('Restored default URL','info');renderSettings();return;}API=url;localStorage.setItem('manor_api',url);toast('URL saved');syncAll();}
-function clearCache(){Object.values(CK).forEach(k=>localStorage.removeItem(k));committedDays=new Set();draftDays=new Set();dailyLog=[];workoutLog=[];toast('Cache cleared','info');renderAll();}
+function clearCache(){
+  Object.values(CK).forEach(k=>localStorage.removeItem(k));
+  localStorage.removeItem(CK.localTs);
+  committedDays=new Set(); draftDays=new Set();
+  dailyLog=[]; workoutLog=[];
+  serverAnalytics=null;
+  toast('Cache cleared — resyncing…','info');
+  renderAll();
+  setTimeout(syncAll, 500);
+}
 
 // ════════════════════════════════════════════════════════════════════
 //  NAV
