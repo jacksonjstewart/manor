@@ -84,12 +84,12 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 
 /* Avatar — premium dark circle, photo-capable */
 .profile-avatar{
-  width:46px;height:46px;border-radius:50%;flex-shrink:0;
+  width:52px;height:52px;border-radius:50%;flex-shrink:0;
   background:radial-gradient(ellipse at 35% 35%,var(--s4),var(--s2));
   border:1px solid var(--b1);
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;position:relative;overflow:hidden;
-  box-shadow:0 2px 12px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);
+  box-shadow:0 2px 14px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.05);
 }
 .profile-photo{
   width:100%;height:100%;object-fit:cover;border-radius:50%;
@@ -97,7 +97,7 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 }
 .profile-initials{
   font-family:'Cormorant Garamond',serif;font-weight:400;
-  font-size:16px;color:rgba(255,255,255,.75);line-height:1;letter-spacing:.5px;
+  font-size:18px;color:rgba(255,255,255,.75);line-height:1;letter-spacing:.5px;
   text-shadow:0 1px 4px rgba(0,0,0,.4);
   position:relative;z-index:1;
 }
@@ -121,20 +121,20 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 }
 
 /* Profile info */
-.profile-info{margin-left:12px;flex:1;min-width:0}
+.profile-info{margin-left:13px;flex:1;min-width:0}
 .profile-name{
-  font-size:14px;font-weight:600;color:var(--t0);
+  font-size:15px;font-weight:600;color:var(--t0);
   letter-spacing:-.1px;line-height:1;
 }
-.profile-sub{display:flex;align-items:center;gap:7px;margin-top:5px}
+.profile-sub{display:flex;align-items:center;gap:7px;margin-top:6px}
 .profile-age{
-  font-size:8px;font-weight:700;letter-spacing:2.5px;
+  font-size:8.5px;font-weight:700;letter-spacing:2.5px;
   color:var(--t3);text-transform:uppercase;
   background:var(--s3);border:1px solid var(--b0);
-  padding:2px 7px;border-radius:99px;
+  padding:3px 8px;border-radius:99px;
 }
 .profile-weight{
-  font-family:'Cormorant Garamond',serif;font-size:14px;
+  font-family:'Cormorant Garamond',serif;font-size:16px;
   font-weight:300;color:var(--t2);letter-spacing:-.3px;
 }
 .profile-weight-dot{
@@ -142,14 +142,14 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
   background:var(--t4);flex-shrink:0;
 }
 
-/* Centre: MANOR — slightly larger, more presence */
+/* Centre: MANOR wordmark */
 .top-bar-logo{
   position:absolute;left:50%;transform:translateX(-50%);
   font-family:'Cormorant Garamond',serif;font-weight:300;
-  font-size:24px;letter-spacing:10px;
+  font-size:26px;letter-spacing:11px;
   color:rgba(255,255,255,.65);
   text-transform:uppercase;user-select:none;pointer-events:none;
-  text-indent:10px;/* compensate letter-spacing on right */
+  text-indent:11px;
   white-space:nowrap;
 }
 
@@ -159,20 +159,20 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 }
 .top-dow{
   font-family:'Cormorant Garamond',serif;font-weight:300;
-  font-size:18px;color:rgba(255,255,255,.82);letter-spacing:-.3px;line-height:1;
+  font-size:22px;color:rgba(255,255,255,.85);letter-spacing:-.4px;line-height:1;
 }
 .top-date{
-  font-size:9px;font-weight:600;letter-spacing:1px;
-  color:var(--t3);margin-top:2px;margin-bottom:2px;
+  font-size:9.5px;font-weight:600;letter-spacing:1px;
+  color:var(--t3);margin-top:3px;margin-bottom:2px;
 }
 .top-time{
-  font-size:11px;color:var(--t4);letter-spacing:.5px;
+  font-size:12px;color:var(--t3);letter-spacing:.5px;
   font-variant-numeric:tabular-nums;
 }
-.top-weather{display:none;align-items:center;gap:4px;justify-content:flex-end;margin-top:2px}
+.top-weather{display:none;align-items:center;gap:4px;justify-content:flex-end;margin-top:3px}
 .top-weather.on{display:flex}
-.tw-icon{font-size:12px;opacity:.45;line-height:1}
-.tw-temp{font-size:11px;font-weight:300;color:var(--t4);font-variant-numeric:tabular-nums}
+.tw-icon{font-size:13px;opacity:.45;line-height:1}
+.tw-temp{font-size:12px;font-weight:300;color:var(--t3);font-variant-numeric:tabular-nums}
 .tw-desc{display:none}
 
 /* Divider beneath top bar */
@@ -466,6 +466,17 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
   color:var(--t3);text-transform:uppercase;margin-top:13px;
   text-align:center;transition:color .6s ease;
   min-height:14px;
+}
+
+/* 100% pulse — the ring outer glows and breathes */
+@keyframes ringPulse {
+  0%   { opacity:1;  transform:scale(1) }
+  40%  { opacity:.6; transform:scale(1.06) }
+  100% { opacity:1;  transform:scale(1) }
+}
+.ring-svg.complete {
+  animation: ringPulse 1.6s ease-in-out 3;
+  transform-origin: center;
 }
 
 /* ── STREAK ──────────────────────────────────────────────────────── */
@@ -2316,34 +2327,41 @@ function renderCompletionRing() {
 
   // ── Draw SVG arc ───────────────────────────────────────────────────
   const SIZE = 168, cx = SIZE/2, cy = SIZE/2;
-  const R  = 68;  // radius
-  const sw = 9;   // stroke width
-  const trackOpacity = '0.055';
+  const R  = 68;
+  const sw = 9;
 
   svg.setAttribute('viewBox', `0 0 ${SIZE} ${SIZE}`);
 
   // Track (full circle, very dim)
   const track = `<circle cx="${cx}" cy="${cy}" r="${R}"
-    fill="none" stroke="rgba(255,255,255,${trackOpacity})" stroke-width="${sw}"/>`;
+    fill="none" stroke="rgba(255,255,255,.055)" stroke-width="${sw}"/>`;
 
   let arc = '';
-  if (pct > 0) {
-    // Arc drawn clockwise from top (−90°)
-    const startAngle = -Math.PI / 2;
-    const endAngle   = startAngle + (2 * Math.PI * (pct / 100));
-    const x1 = cx + R * Math.cos(startAngle);
-    const y1 = cy + R * Math.sin(startAngle);
-    const x2 = cx + R * Math.cos(endAngle);
-    const y2 = cy + R * Math.sin(endAngle);
-    const large = pct > 50 ? 1 : 0;
-
-    // Glow layer (slightly wider, same path, blurred)
+  if (pct === 100) {
+    // Full circle — SVG arc can't draw a complete 360° with a single path command.
+    // Use a <circle> element instead, then trigger pulse animation.
     const glowFilter = glowColor !== 'none'
-      ? `style="filter:drop-shadow(0 0 8px ${glowColor})"`
+      ? `style="filter:drop-shadow(0 0 12px ${glowColor})"`
       : '';
-
-    arc = `<path d="M ${x1.toFixed(3)} ${y1.toFixed(3)} A ${R} ${R} 0 ${large} 1 ${x2.toFixed(3)} ${y2.toFixed(3)}"
-      fill="none" stroke="${arcColor}" stroke-width="${sw}" stroke-linecap="round" ${glowFilter}/>`;
+    arc = `<circle cx="${cx}" cy="${cy}" r="${R}"
+      fill="none" stroke="${arcColor}" stroke-width="${sw}" ${glowFilter}/>`;
+    svg.classList.add('complete');
+  } else {
+    svg.classList.remove('complete');
+    if (pct > 0) {
+      const startAngle = -Math.PI / 2;
+      const endAngle   = startAngle + (2 * Math.PI * (pct / 100));
+      const x1 = cx + R * Math.cos(startAngle);
+      const y1 = cy + R * Math.sin(startAngle);
+      const x2 = cx + R * Math.cos(endAngle);
+      const y2 = cy + R * Math.sin(endAngle);
+      const large = pct > 50 ? 1 : 0;
+      const glowFilter = glowColor !== 'none'
+        ? `style="filter:drop-shadow(0 0 8px ${glowColor})"`
+        : '';
+      arc = `<path d="M ${x1.toFixed(3)} ${y1.toFixed(3)} A ${R} ${R} 0 ${large} 1 ${x2.toFixed(3)} ${y2.toFixed(3)}"
+        fill="none" stroke="${arcColor}" stroke-width="${sw}" stroke-linecap="round" ${glowFilter}/>`;
+    }
   }
 
   svg.innerHTML = track + arc;
