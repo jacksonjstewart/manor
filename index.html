@@ -82,27 +82,42 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
   position:relative;
 }
 
-/* Avatar — premium dark circle with gold gradient ring */
+/* Avatar — premium dark circle, photo-capable */
 .profile-avatar{
   width:46px;height:46px;border-radius:50%;flex-shrink:0;
   background:radial-gradient(ellipse at 35% 35%,var(--s4),var(--s2));
   border:1px solid var(--b1);
   display:flex;align-items:center;justify-content:center;
-  cursor:default;position:relative;
+  cursor:pointer;position:relative;overflow:hidden;
   box-shadow:0 2px 12px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);
+}
+.profile-photo{
+  width:100%;height:100%;object-fit:cover;border-radius:50%;
+  position:absolute;inset:0;
 }
 .profile-initials{
   font-family:'Cormorant Garamond',serif;font-weight:400;
   font-size:16px;color:rgba(255,255,255,.75);line-height:1;letter-spacing:.5px;
   text-shadow:0 1px 4px rgba(0,0,0,.4);
+  position:relative;z-index:1;
 }
-/* thin gold arc around avatar */
+/* tap-to-set hint — shows on hover when no photo */
+.profile-avatar-hint{
+  display:none;position:absolute;inset:0;border-radius:50%;
+  background:rgba(0,0,0,.55);
+  font-size:6.5px;font-weight:700;letter-spacing:1px;
+  color:#fff;text-transform:uppercase;text-align:center;
+  justify-content:center;align-items:center;
+  flex-direction:column;gap:2px;
+}
+.profile-avatar:hover .profile-avatar-hint{display:flex}
+/* thin gold arc */
 .profile-avatar::after{
   content:'';position:absolute;inset:-2px;border-radius:50%;
   background:conic-gradient(var(--gold) 0deg, var(--gold2) 90deg, transparent 180deg, transparent 360deg);
   -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#fff calc(100% - 1.5px));
   mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#fff calc(100% - 1.5px));
-  opacity:.55;
+  opacity:.55;pointer-events:none;
 }
 
 /* Profile info */
@@ -138,18 +153,26 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
   white-space:nowrap;
 }
 
-/* Right: time + compact weather */
+/* Right: day + date + time + compact weather */
 .top-bar-right{
-  display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:flex-end;gap:1px;flex-shrink:0;
+}
+.top-dow{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:18px;color:rgba(255,255,255,.82);letter-spacing:-.3px;line-height:1;
+}
+.top-date{
+  font-size:9px;font-weight:600;letter-spacing:1px;
+  color:var(--t3);margin-top:2px;margin-bottom:2px;
 }
 .top-time{
-  font-size:12px;color:var(--t3);letter-spacing:.5px;
+  font-size:11px;color:var(--t4);letter-spacing:.5px;
   font-variant-numeric:tabular-nums;
 }
-.top-weather{display:none;align-items:center;gap:4px;justify-content:flex-end}
+.top-weather{display:none;align-items:center;gap:4px;justify-content:flex-end;margin-top:2px}
 .top-weather.on{display:flex}
-.tw-icon{font-size:13px;opacity:.5;line-height:1}
-.tw-temp{font-size:11px;font-weight:300;color:var(--t3);font-variant-numeric:tabular-nums}
+.tw-icon{font-size:12px;opacity:.45;line-height:1}
+.tw-temp{font-size:11px;font-weight:300;color:var(--t4);font-variant-numeric:tabular-nums}
 .tw-desc{display:none}
 
 /* Divider beneath top bar */
@@ -423,26 +446,27 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
 /* ── COMPLETION RING ─────────────────────────────────────────────── */
 .ring-wrap{
   display:flex;flex-direction:column;align-items:center;
-  margin-bottom:26px;
+  margin-bottom:22px;
 }
-.ring-outer{position:relative;width:172px;height:172px;margin:0 auto}
-.ring-svg{position:absolute;top:0;left:0;width:172px;height:172px;overflow:visible}
+.ring-outer{position:relative;width:168px;height:168px;margin:0 auto}
+.ring-svg{position:absolute;top:0;left:0;width:168px;height:168px;overflow:visible}
 .ring-center{
   position:absolute;inset:0;display:flex;flex-direction:column;
   align-items:center;justify-content:center;pointer-events:none;
 }
-.ring-count{
+.ring-pct{
   font-family:'Cormorant Garamond',serif;font-weight:300;
-  font-size:64px;color:#fff;line-height:1;letter-spacing:-4px;
-  transition:color .3s;
+  font-size:56px;color:#fff;line-height:1;letter-spacing:-3px;
+  transition:color .6s ease;
 }
-.ring-count.all{color:var(--green)}
-.ring-denom{font-size:9px;color:var(--t3);letter-spacing:3px;text-transform:uppercase;margin-top:4px}
-.ring-label{
-  font-size:7px;font-weight:700;letter-spacing:3.5px;color:var(--t3);
-  text-transform:uppercase;margin-top:14px;transition:color .3s;
+.ring-pct-sign{font-size:22px;letter-spacing:0;opacity:.6;vertical-align:super}
+/* Motivating text beneath ring */
+.ring-motive{
+  font-size:8.5px;font-weight:700;letter-spacing:2.5px;
+  color:var(--t3);text-transform:uppercase;margin-top:13px;
+  text-align:center;transition:color .6s ease;
+  min-height:14px;
 }
-.ring-label.all{color:var(--green)}
 
 /* ── STREAK ──────────────────────────────────────────────────────── */
 .streak-row{
@@ -842,10 +866,10 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
       <div class="main">
         <!-- TOP BAR -->
         <div class="top-bar">
-          <!-- Left: profile -->
-          <div class="profile-avatar">
-            <div class="profile-initials">JS</div>
-            <div class="profile-ring"></div>
+          <!-- Left: profile (tap to set photo, persists via localStorage) -->
+          <div class="profile-avatar" id="profile-avatar" onclick="promptProfilePhoto()">
+            <img class="profile-photo" id="profile-photo" src="" alt="" style="display:none"/>
+            <div class="profile-initials" id="profile-initials">JS</div>
           </div>
           <div class="profile-info">
             <div class="profile-name">Jackson Stewart</div>
@@ -859,8 +883,10 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
           <!-- Centre: MANOR wordmark -->
           <div class="top-bar-logo">MANOR</div>
 
-          <!-- Right: time + weather -->
+          <!-- Right: day + date + time + weather -->
           <div class="top-bar-right">
+            <div class="top-dow" id="hdr-dow">Saturday</div>
+            <div class="top-date" id="hdr-date">March 14, 2026</div>
             <div class="top-time" id="hdr-time">12:00 PM</div>
             <div class="top-weather" id="hdr-weather">
               <div class="tw-icon" id="tw-icon"></div>
@@ -895,16 +921,15 @@ body{font-family:'Outfit',sans-serif;color:#e0e0e0;-webkit-font-smoothing:antial
             </div>
           </div>
 
-          <!-- Single completion ring for all 5 actions -->
+          <!-- Completion ring — single smooth arc, percentage, motivating text -->
           <div class="ring-wrap">
             <div class="ring-outer">
               <svg class="ring-svg" viewBox="0 0 172 172" id="ring-svg" xmlns="http://www.w3.org/2000/svg"></svg>
               <div class="ring-center">
-                <div class="ring-count" id="ring-count">0</div>
-                <div class="ring-denom">of 5</div>
+                <div class="ring-pct" id="ring-pct">0<span class="ring-pct-sign">%</span></div>
               </div>
             </div>
-            <div class="ring-label" id="ring-label">Daily Actions</div>
+            <div class="ring-motive" id="ring-motive">Start your day</div>
           </div>
 
           <!-- Streak -->
@@ -1304,6 +1329,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   startClock();
   fetchWeather();
+  loadProfilePhoto();
   renderAll();       // render immediately from localStorage — no waiting for network
   buildProgCards();
   checkEOD();
@@ -1427,7 +1453,59 @@ function setSyncState(state, label) {
 // ════════════════════════════════════════════════════════════════════
 //  CLOCK
 // ════════════════════════════════════════════════════════════════════
-// ── PROFILE ───────────────────────────────────────────────────────────────────
+// ── PROFILE PHOTO ────────────────────────────────────────────────────────────
+// Photo is stored as a URL in localStorage (enter any publicly-hosted image URL)
+// For cross-device sync: use a permanent image URL (Dropbox, Google Drive public link, etc.)
+function loadProfilePhoto() {
+  const url = localStorage.getItem('manor_photo_url');
+  const img = document.getElementById('profile-photo');
+  const ini = document.getElementById('profile-initials');
+  if (url && img) {
+    img.src = url;
+    img.style.display = 'block';
+    if (ini) ini.style.display = 'none';
+  }
+}
+
+function promptProfilePhoto() {
+  const current = localStorage.getItem('manor_photo_url') || '';
+  const box = document.getElementById('modal-box');
+  box.innerHTML = `
+    <div class="m-handle"></div>
+    <div class="m-title">Profile Photo</div>
+    <div style="font-size:11px;color:var(--t2);line-height:1.7;margin-bottom:14px">
+      Enter any publicly accessible image URL.<br>
+      For cross-device: use a permanent link (Google Drive, Dropbox, etc).
+    </div>
+    <input class="fi" id="photo-url-input" type="text" placeholder="https://…" value="${current}"
+      style="font-size:12px;margin-bottom:10px"/>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="m-save" style="flex:1" onclick="saveProfilePhoto()">Set Photo</button>
+      ${current ? `<button class="btn btn-red" onclick="clearProfilePhoto()" style="flex-shrink:0">Remove</button>` : ''}
+    </div>
+    <button class="m-cancel" onclick="closeModal()">Cancel</button>`;
+  document.getElementById('overlay').classList.add('on');
+  setTimeout(() => document.getElementById('photo-url-input')?.focus(), 80);
+}
+
+function saveProfilePhoto() {
+  const url = document.getElementById('photo-url-input')?.value?.trim();
+  if (!url) { closeModal(); return; }
+  localStorage.setItem('manor_photo_url', url);
+  loadProfilePhoto();
+  closeModal();
+  toast('Profile photo set', 'ok');
+}
+
+function clearProfilePhoto() {
+  localStorage.removeItem('manor_photo_url');
+  const img = document.getElementById('profile-photo');
+  const ini = document.getElementById('profile-initials');
+  if (img) { img.src = ''; img.style.display = 'none'; }
+  if (ini) ini.style.display = 'block';
+  closeModal();
+  toast('Photo removed', 'info');
+}
 // Jackson Stewart — DOB April 7, 1994
 const PROFILE_DOB = new Date('1994-04-07T00:00:00');
 const PROFILE_SEX = 'M';
@@ -1454,12 +1532,17 @@ function renderProfile() {
 }
 
 function startClock() {
+  const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const MONS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   function tick() {
     const n  = new Date();
     const h  = n.getHours(), m = n.getMinutes();
     const hd = h % 12 || 12, ampm = h >= 12 ? 'PM' : 'AM';
+    const dow  = document.getElementById('hdr-dow');
+    const date = document.getElementById('hdr-date');
     const time = document.getElementById('hdr-time');
+    if (dow)  dow.textContent  = DAYS[n.getDay()];
+    if (date) date.textContent = `${MONS[n.getMonth()]} ${n.getDate()}, ${n.getFullYear()}`;
     if (time) time.textContent = `${pad(hd)}:${pad(m)} ${ampm}`;
   }
   tick();
@@ -2170,86 +2253,100 @@ function renderQuote() {
 }
 
 // ── COMPLETION RING ───────────────────────────────────────────────────
+// Single smooth arc from 0→100% fed by green-only completions.
+// No segments, no labels. Just pure progress + percentage + motivating copy.
 function renderCompletionRing() {
-  const svg  = document.getElementById('ring-svg');
-  const cnt  = document.getElementById('ring-count');
-  const lbl  = document.getElementById('ring-label');
+  const svg    = document.getElementById('ring-svg');
+  const pctEl  = document.getElementById('ring-pct');
+  const motEl  = document.getElementById('ring-motive');
   if (!svg) return;
 
-  const te = todayEntry();
-
-  // Per-action state: 'green' | 'amber' | 'empty'
-  const segStates = ACTIONS.map(a => {
-    const v = te[a.id]; const c = te[a.id+'_checked'];
-    const hasVal = v != null && v !== '';
-    if (hasVal && c) return 'green';
-    if (hasVal || c) return 'amber';   // value without check, or check without value
-    return 'empty';
-  });
-
-  const done = segStates.filter(s => s === 'green').length;
-  const allDone = done === ACTIONS.length;
-
-  if (cnt) {
-    cnt.textContent = done;
-    cnt.className = 'ring-count' + (allDone ? ' all' : '');
-  }
-  if (lbl) {
-    lbl.textContent = allDone ? '— All Complete —' : 'Daily Actions';
-    lbl.className = 'ring-label' + (allDone ? ' all' : '');
-  }
-
-  const cx = 86, cy = 86, R = 72, sw = 8;
+  const te   = todayEntry();
+  const done = ACTIONS.filter(a => {
+    const v = te[a.id]; const ck = te[a.id+'_checked'];
+    return v != null && v !== '' && ck === true;
+  }).length;
   const total = ACTIONS.length;
-  const gapDeg = 5;
-  const segDeg = (360 / total) - gapDeg;
-  const toRad  = d => d * Math.PI / 180;
+  const pct   = Math.round((done / total) * 100);
 
-  const COL = {
-    green: '#3ecf6e',
-    amber: '#f0a030',
-    empty: 'rgba(255,255,255,.055)',
-  };
-  const GLOW = {
-    green: 'filter:drop-shadow(0 0 6px rgba(62,207,110,.5))',
-    amber: 'filter:drop-shadow(0 0 5px rgba(240,160,48,.4))',
-    empty: '',
-  };
-
-  // Short action abbreviations for ring labels
-  const ABBR = ['WAKE','WEIGHT','TRAIN','CALS','PROTEIN'];
-
-  let paths = '';
-  let textEls = '';
-
-  for (let i = 0; i < total; i++) {
-    const midDeg   = -90 + i * (360 / total) + (360 / total) / 2;
-    const startDeg = -90 + i * (360 / total) + gapDeg / 2;
-    const endDeg   = startDeg + segDeg;
-    const x1 = cx + R * Math.cos(toRad(startDeg));
-    const y1 = cy + R * Math.sin(toRad(startDeg));
-    const x2 = cx + R * Math.cos(toRad(endDeg));
-    const y2 = cy + R * Math.sin(toRad(endDeg));
-    const st = segStates[i];
-    const col = COL[st];
-    const glow = GLOW[st];
-
-    paths += `<path d="M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${R} ${R} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)}"
-      fill="none" stroke="${col}" stroke-width="${sw}" stroke-linecap="round"
-      style="${glow}"/>`;
-
-    // Action label outside ring
-    const labelR = R + 18;
-    const lx = cx + labelR * Math.cos(toRad(midDeg));
-    const ly = cy + labelR * Math.sin(toRad(midDeg));
-    const labelCol = st === 'green' ? 'rgba(62,207,110,.55)' : st === 'amber' ? 'rgba(240,160,48,.5)' : 'rgba(255,255,255,.12)';
-    textEls += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" dominant-baseline="middle"
-      font-family="Outfit,sans-serif" font-weight="700" font-size="6.5" letter-spacing="1.5"
-      fill="${labelCol}">${ABBR[i]}</text>`;
+  // ── Colour ramp by completion ──────────────────────────────────────
+  // 0%        → muted crimson/dark (nothing yet)
+  // 1–39%     → gold (started, early)
+  // 40–79%    → amber (good progress)
+  // 80–99%    → blue-teal (almost there)
+  // 100%      → green (complete)
+  let arcColor, glowColor, textColor, motiveText;
+  if (pct === 0) {
+    arcColor  = 'rgba(192,57,43,.35)';
+    glowColor = 'none';
+    textColor = 'rgba(255,255,255,.25)';
+    motiveText = 'Begin.';
+  } else if (pct < 40) {
+    arcColor  = '#c9a84c';
+    glowColor = 'rgba(201,168,76,.35)';
+    textColor = '#c9a84c';
+    motiveText = done === 1 ? 'One down. Four to go.' : 'Building momentum.';
+  } else if (pct < 80) {
+    arcColor  = '#f0a030';
+    glowColor = 'rgba(240,160,48,.4)';
+    textColor = '#f0a030';
+    motiveText = pct === 60 ? 'More than halfway.' : 'Pushing through.';
+  } else if (pct < 100) {
+    arcColor  = '#5a9cf5';
+    glowColor = 'rgba(90,156,245,.45)';
+    textColor = '#5a9cf5';
+    motiveText = 'Almost there.';
+  } else {
+    arcColor  = '#3ecf6e';
+    glowColor = 'rgba(62,207,110,.55)';
+    textColor = '#3ecf6e';
+    motiveText = 'Day owned.';
   }
 
-  svg.innerHTML = paths + textEls;
-  svg.setAttribute('viewBox', `0 0 172 172`);
+  // ── Update centre percentage ───────────────────────────────────────
+  if (pctEl) {
+    pctEl.style.color = textColor;
+    // Keep the % sign element, just update the number
+    pctEl.innerHTML = `${pct}<span class="ring-pct-sign">%</span>`;
+  }
+  if (motEl) {
+    motEl.textContent = motiveText;
+    motEl.style.color = textColor;
+  }
+
+  // ── Draw SVG arc ───────────────────────────────────────────────────
+  const SIZE = 168, cx = SIZE/2, cy = SIZE/2;
+  const R  = 68;  // radius
+  const sw = 9;   // stroke width
+  const trackOpacity = '0.055';
+
+  svg.setAttribute('viewBox', `0 0 ${SIZE} ${SIZE}`);
+
+  // Track (full circle, very dim)
+  const track = `<circle cx="${cx}" cy="${cy}" r="${R}"
+    fill="none" stroke="rgba(255,255,255,${trackOpacity})" stroke-width="${sw}"/>`;
+
+  let arc = '';
+  if (pct > 0) {
+    // Arc drawn clockwise from top (−90°)
+    const startAngle = -Math.PI / 2;
+    const endAngle   = startAngle + (2 * Math.PI * (pct / 100));
+    const x1 = cx + R * Math.cos(startAngle);
+    const y1 = cy + R * Math.sin(startAngle);
+    const x2 = cx + R * Math.cos(endAngle);
+    const y2 = cy + R * Math.sin(endAngle);
+    const large = pct > 50 ? 1 : 0;
+
+    // Glow layer (slightly wider, same path, blurred)
+    const glowFilter = glowColor !== 'none'
+      ? `style="filter:drop-shadow(0 0 8px ${glowColor})"`
+      : '';
+
+    arc = `<path d="M ${x1.toFixed(3)} ${y1.toFixed(3)} A ${R} ${R} 0 ${large} 1 ${x2.toFixed(3)} ${y2.toFixed(3)}"
+      fill="none" stroke="${arcColor}" stroke-width="${sw}" stroke-linecap="round" ${glowFilter}/>`;
+  }
+
+  svg.innerHTML = track + arc;
 }
 
 // ── STATUS INDICATORS ─────────────────────────────────────────────────
